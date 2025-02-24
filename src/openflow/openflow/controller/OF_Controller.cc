@@ -126,6 +126,9 @@ void OF_Controller::handleMessageWhenUp(cMessage *msg){
             }
             calcAvgQueueSize(msgList.size());
         }
+        else if (msg->getKind() == TCP_I_AVAILABLE) {
+            registerConnection(check_and_cast<Indication *>(msg));
+        }
         //delete the msg for efficiency
         delete msg;
     }else if (this->booted){
@@ -137,10 +140,6 @@ void OF_Controller::handleMessageWhenUp(cMessage *msg){
             cMessage *event = new cMessage("event");
             event->setContextPointer(msg);
             scheduleAt(simTime()+serviceTime, event);
-        }
-        else if (msg->getKind() == TCP_I_AVAILABLE) {
-            registerConnection(check_and_cast<Indication *>(msg));
-            delete msg;
         }
 
         calcAvgQueueSize(msgList.size());

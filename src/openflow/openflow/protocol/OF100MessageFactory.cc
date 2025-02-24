@@ -121,7 +121,7 @@ Packet* OF100MessageFactory::createHello() {
     return pk;
 }
 
-Packet* OF100MessageFactory::createPacketIn(ofp_packet_in_reason reason, EthernetIIFrame *frame, uint32_t buffer_id, bool sendFullFrame) {
+Packet* OF100MessageFactory::createPacketIn(ofp_packet_in_reason reason, Packet *ethPk, uint32_t buffer_id, bool sendFullFrame) {
    auto msg = makeShared<OFP_Packet_In>();
    auto pk = new Packet("packetIn");
 
@@ -138,31 +138,34 @@ Packet* OF100MessageFactory::createPacketIn(ofp_packet_in_reason reason, Etherne
 
    if(sendFullFrame){
        msg->setChunkLength(B(18));
-       msg->encapsulate(frame->dup());
+       // msg->encapsulate(frame->dup());
+       pk->insertAtFront(ethPk->peekData());
+       pk->insertAtFront(msg);
    } else {
+       auto frame = ethPk->popAtFront<EthernetMacHeader>();
        // packet in buffer so only send header fields
        oxm_basic_match match = oxm_basic_match();
-       match.OFB_IN_PORT = frame->getArrivalGate()->getIndex();
+       match.OFB_IN_PORT = ethPk->getArrivalGate()->getIndex();
 
        match.OFB_ETH_SRC = frame->getSrc();
        match.OFB_ETH_DST = frame->getDest();
-       match.OFB_ETH_TYPE = frame->getEtherType();
+       match.OFB_ETH_TYPE = frame->getTypeOrLength();
        //extract ARP specific match fields if present
-       if(frame->getEtherType()==ETHERTYPE_ARP){
-           ArpPacket *arpPacket = check_and_cast<ArpPacket *>(frame->getEncapsulatedPacket());
+       if (frame->getTypeOrLength() == ETHERTYPE_ARP) {
+           auto arpPacket = ethPk->peekAtFront<ArpPacket>();
            match.OFB_IP_PROTO = arpPacket->getOpcode();
            match.OFB_IPV4_SRC = arpPacket->getSrcIpAddress();
            match.OFB_IPV4_DST = arpPacket->getDestIpAddress();
        }
        msg->setMatch(match);// 6 Byte
        msg->setChunkLength(B(24));
+       pk->insertAtFront(msg);
    }
 
-   pk->insertAtFront(msg);
    return pk;
 }
 
-Packet* OF100MessageFactory::createPacketOut(uint32_t* outports, int n_outports, int in_port, uint32_t buffer_id, EthernetIIFrame *frame) {
+Packet* OF100MessageFactory::createPacketOut(uint32_t* outports, int n_outports, int in_port, uint32_t buffer_id, Packet *ethPk) {
     auto msg = makeShared<OFP_Packet_Out>();
     auto pk = new Packet("packetOut");
 
@@ -185,8 +188,9 @@ Packet* OF100MessageFactory::createPacketOut(uint32_t* outports, int n_outports,
 
     if (buffer_id == OFP_NO_BUFFER)
     {   //No Buffer so send full frame.
-        if(frame){
-            msg->encapsulate(frame->dup());
+        if(ethPk){
+            // msg->encapsulate(frame->dup());
+            pk->insertAtFront(ethPk->peekData());
         } else {
             throw cRuntimeError("OF100MessageFactory::createPacketOut: OFP_NO_BUFFER was set but no frame was provided.");
         }
