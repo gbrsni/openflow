@@ -9,13 +9,13 @@
 #include "inet/common/ModuleAccess.h"
 
 
+namespace openflow{
+
 simsignal_t AbstractControllerApp::PacketInSignalId = registerSignal("PacketIn");
 simsignal_t AbstractControllerApp::PacketOutSignalId = registerSignal("PacketOut");
 simsignal_t AbstractControllerApp::PacketFeatureRequestSignalId = registerSignal("PacketFeatureRequest");
 simsignal_t AbstractControllerApp::PacketFeatureReplySignalId = registerSignal("PacketFeatureReply");
 simsignal_t AbstractControllerApp::BootedSignalId = registerSignal("Booted");
-
-namespace openflow{
 
 Define_Module(AbstractControllerApp);
 
@@ -155,12 +155,11 @@ void AbstractControllerApp::finish(){
 
 }
 
-OFP_Flow_Mod * AbstractControllerApp::createFlowMod(ofp_flow_mod_command mod_com,const oxm_basic_match  &match, uint32_t outport, int idleTimeOut =1 , int hardTimeOut=0){
-
+Packet * AbstractControllerApp::createFlowMod(ofp_flow_mod_command mod_com,const oxm_basic_match  &match, uint32_t outport, int idleTimeOut, int hardTimeOut){
     return createFlowMod(mod_com, match, outport, this->priority, idleTimeOut, hardTimeOut);
 }
 
-Packet * AbstractControllerApp::createFlowMod(ofp_flow_mod_command mod_com,const oxm_basic_match  &match, uint32_t outport, int priority, int idleTimeOut=1 , int hardTimeOut=0){
+Packet * AbstractControllerApp::createFlowMod(ofp_flow_mod_command mod_com,const oxm_basic_match  &match, uint32_t outport, int priority, int idleTimeOut, int hardTimeOut){
     auto flow_mod_msg = makeShared<OFP_Flow_Mod>();
     auto pkt = new Packet("flow_mod");
 

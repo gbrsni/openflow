@@ -189,7 +189,7 @@ void OF_Controller::processQueuedMsg(Packet *pkt){
                 break;
             case OFPT_VENDOR:
                 // the controller apps might want to implement vendor specific features so forward them.
-                handleExperimenter(of_msg);
+                handleExperimenter(pkt);
                 break;
             default:
                 break;
@@ -261,9 +261,12 @@ void OF_Controller::sendPacketOut(Packet *pkt, TcpSocket *socket){
 }
 
 
-void OF_Controller::handleExperimenter(Open_Flow_Message* of_msg) {
+void OF_Controller::handleExperimenter(Packet* pkt) {
+    Enter_Method_Silent();
+    take(pkt);
+    auto  of_msg = pkt->peekAtFront<Open_Flow_Message>();
     EV << "OFA_controller::handleExperimenter" << endl;
-    emit(PacketExperimenterSignalId, of_msg);
+    emit(PacketExperimenterSignalId, pkt);
 }
 
 

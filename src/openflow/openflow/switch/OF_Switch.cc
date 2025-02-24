@@ -360,8 +360,6 @@ void OF_Switch::processQueuedMsg(Packet *data_msg){
                 default:
                     // Should launch an exception?
                     break;
-                default:
-                    break;
                 }
         }
 

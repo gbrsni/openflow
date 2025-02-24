@@ -90,6 +90,7 @@ protected:
     void sendFeatureRequest(Packet *msg);
     virtual void handleFeaturesReply(Packet *of_msg);
     virtual void handlePacketIn(Packet *of_msg);
+    virtual void handleExperimenter(Packet* of_msg);
 
     // Lifecycle methods
     virtual void handleStartOperation(LifecycleOperation *operation) override;

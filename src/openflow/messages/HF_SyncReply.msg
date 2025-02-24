@@ -5,8 +5,9 @@ import inet.common.packet.chunk.Chunk;
 cplusplus {{
     #include "openflow/hyperflow/HyperFlowStructs.h"
     namespace openflow{
-    typedef std::list<ControlChannelEntry> ControlChannel;
-    typedef std::list<DataChannelEntry> DataChannel;    
+        typedef std::list<ControlChannelEntry> ControlChannel;
+        typedef std::list<DataChannelEntry> DataChannel;
+    } 
 }};
 
 namespace openflow;

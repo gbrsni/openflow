@@ -3,6 +3,7 @@
 #include "openflow/messages/HF_SyncRequest_m.h"
 #include "openflow/messages/HF_ReportIn_m.h"
 #include "openflow/messages/HF_SyncReply_m.h"
+#include "openflow/openflow/protocol/OFMatchFactory.h"
 #include "inet/common/socket/SocketTag_m.h"
 
 using namespace std;
@@ -122,7 +123,7 @@ void HyperFlowSynchronizer::handleSyncRequest(Packet *pkt){
     std::list<ControlChannelEntry> tempControlChannel = std::list<ControlChannelEntry>();
     SimTime lastValidTime = simTime()-par("aliveInterval");
 
-    for(iterControl=controlChannel.begin();iterControl!=controlChannel.end(); ) {
+    for(auto iterControl=controlChannel.begin();iterControl!=controlChannel.end(); ) {
         if((*iterControl).time >= lastValidTime){
            tempControlChannel.push_back(*iterControl);
            ++iterControl;
