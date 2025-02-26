@@ -36,12 +36,10 @@ module Open_Flow_Switch
 
         *.forwarding = this.forwarding;
         *.multicastForwarding = this.multicastForwarding;   // for IPv4, IPv6, Generic
-        *.routingTableModule = default(absPath(".routingTable"));
         *.interfaceTableModule = default(absPath(".interfaceTable"));
         etherMAC[*].encapType = default("EtherEncapDummy");
         etherMAC[*].csmacdSupport = this.csmacdSupport;
         etherMAC[*].macType = this.macType;
-        networkLayer.proxyARP = default(false); 
 
 
         etherMAC[*].duplexMode = this.duplexMode;
