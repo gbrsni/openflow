@@ -117,10 +117,9 @@ void KN_ARPResponder::handlePacketIn(Packet *pktIn){
 
 
 void KN_ARPResponder::receiveSignal(cComponent *src, simsignal_t id, cObject *obj, cObject *details) {
-    Enter_Method_Silent();
+    Enter_Method("KN_ARPResponder::receiveSignal %s", cComponent::getSignalName(id));
     //set knagent link
     ARPResponder::receiveSignal(src,id,obj,details);
-    Enter_Method("KN_ARPResponder::receiveSignal %s", cComponent::getSignalName(id));
     if(knAgent == NULL && controller != NULL){
         auto appList = controller->getAppList();
 
