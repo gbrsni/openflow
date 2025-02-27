@@ -1,21 +1,37 @@
 
-
 package openflow.openflow.controller;
 
-//Interface module for the OpenFlow Controller module.
-//Communication with OpenFlow switch;
-//Sending Packet-Out messages;
-//Sending Flow Modification messages;
-
+//
+// IOpenFlowController is the base interface for OpenFlow controller implementations in the
+// openflow4core simulation model. It defines the common parameters and gates that all
+// OpenFlow controller implementations must provide.
+//
+// The OpenFlow controller is responsible for:
+//
+// 1. Establishing and maintaining connections with OpenFlow switches
+// 2. Processing OpenFlow protocol messages (HELLO, FEATURES_REQUEST, PACKET_IN, etc.)
+// 3. Managing the network by installing flow entries in switches
+// 4. Providing an interface for controller applications to implement network control logic
+//
+// This interface allows for different controller implementations while maintaining
+// compatibility with the rest of the simulation model. The primary implementation
+// is the OF_Controller module.
+//
 moduleinterface IOpenFlowController
 {
     parameters:
-        
-        string address;// = default("");
-        int port;// = default(6633);
-        double serviceTime @unit("s");// = default(0s);
-        double bootTime @unit("s");// = default(0s);
-        
+        // IP address the controller listens on
+        string address;
+
+        // TCP port the controller listens on (standard OpenFlow port is 6633)
+        int port;
+
+        // Processing time for each message (used to simulate controller processing delay)
+        double serviceTime @unit("s");
+
+        // Time before the controller is fully operational (boot delay)
+        double bootTime @unit("s");
+
     gates:
         input socketIn @labels(TcpCommand/up);
         output socketOut @labels(TcpCommand/down);

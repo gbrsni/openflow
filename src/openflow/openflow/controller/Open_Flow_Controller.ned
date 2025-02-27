@@ -1,5 +1,4 @@
 
-
 package openflow.openflow.controller;
 import inet.applications.contract.IApp;
 import inet.common.MessageDispatcher;
@@ -11,9 +10,17 @@ import inet.protocolelement.contract.IProtocolLayer;
 import inet.transportlayer.contract.ITcp;
 import openflow.controllerApps.IControllerApp;
 
-
 //
-// TODO documentation
+// The Open_Flow_Controller is a compound module that represents a complete OpenFlow controller
+// in the openflow simulation model. It combines the core OpenFlow controller functionality
+// (OF_Controller) with standard networking components and controller applications.
+//
+// The Open_Flow_Controller can be configured with multiple controller applications that
+// work together to manage the network. These applications register with the OF_Controller
+// and receive notifications about network events through signals.
+//
+// This modular design allows for flexible configuration of the controller with different
+// combinations of applications to implement various SDN control strategies.
 //
 module Open_Flow_Controller
 {
