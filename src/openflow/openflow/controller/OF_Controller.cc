@@ -24,7 +24,13 @@ namespace openflow{
 
 Define_Module(OF_Controller);
 
-
+simsignal_t OF_Controller::PacketInSignalId =registerSignal("PacketIn");
+simsignal_t OF_Controller::PacketOutSignalId =registerSignal("PacketOut");
+simsignal_t OF_Controller::PacketHelloSignalId =registerSignal("PacketHello");
+simsignal_t OF_Controller::PacketFeatureRequestSignalId = registerSignal("PacketFeatureRequest");
+simsignal_t OF_Controller::PacketFeatureReplySignalId = registerSignal("PacketFeatureReply");
+simsignal_t OF_Controller::PacketExperimenterSignalId = registerSignal("PacketExperimenter");
+simsignal_t OF_Controller::BootedSignalId = registerSignal("Booted");
 
 OF_Controller::OF_Controller(){
 
@@ -41,13 +47,6 @@ void OF_Controller::initialize(int stage){
     //register signals
     OperationalBase::initialize(stage);
     if (stage == INITSTAGE_LOCAL) {
-        PacketInSignalId =registerSignal("PacketIn");
-        PacketOutSignalId =registerSignal("PacketOut");
-        PacketHelloSignalId =registerSignal("PacketHello");
-        PacketFeatureRequestSignalId = registerSignal("PacketFeatureRequest");
-        PacketFeatureReplySignalId = registerSignal("PacketFeatureReply");
-        PacketExperimenterSignalId = registerSignal("PacketExperimenter");
-        BootedSignalId = registerSignal("Booted");
 
     //stats
         queueSize = registerSignal("queueSize");

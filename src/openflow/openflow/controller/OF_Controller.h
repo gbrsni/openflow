@@ -40,13 +40,13 @@ protected:
     /**
      * Observer Signals
      */
-    simsignal_t PacketInSignalId;
-    simsignal_t PacketOutSignalId;
-    simsignal_t PacketHelloSignalId;
-    simsignal_t PacketFeatureRequestSignalId;
-    simsignal_t PacketFeatureReplySignalId;
-    simsignal_t PacketExperimenterSignalId;
-    simsignal_t BootedSignalId;
+    static simsignal_t PacketInSignalId;
+    static simsignal_t PacketOutSignalId;
+    static simsignal_t PacketHelloSignalId;
+    static simsignal_t PacketFeatureRequestSignalId;
+    static simsignal_t PacketFeatureReplySignalId;
+    static simsignal_t PacketExperimenterSignalId;
+    static simsignal_t BootedSignalId;
 
     /**
      * Statistics
