@@ -42,6 +42,7 @@ protected:
     static simsignal_t PacketOutSignalId;
     static simsignal_t PacketFeatureRequestSignalId;
     static simsignal_t PacketFeatureReplySignalId;
+    static simsignal_t PacketExperimenterSignalId;
     static simsignal_t BootedSignalId;
 
     long packetsFlooded = 0;

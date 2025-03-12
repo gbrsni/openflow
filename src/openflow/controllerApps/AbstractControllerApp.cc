@@ -15,6 +15,7 @@ simsignal_t AbstractControllerApp::PacketInSignalId = registerSignal("PacketIn")
 simsignal_t AbstractControllerApp::PacketOutSignalId = registerSignal("PacketOut");
 simsignal_t AbstractControllerApp::PacketFeatureRequestSignalId = registerSignal("PacketFeatureRequest");
 simsignal_t AbstractControllerApp::PacketFeatureReplySignalId = registerSignal("PacketFeatureReply");
+simsignal_t AbstractControllerApp::PacketExperimenterSignalId = registerSignal("PacketExperimenter");
 simsignal_t AbstractControllerApp::BootedSignalId = registerSignal("Booted");
 
 Define_Module(AbstractControllerApp);
@@ -55,11 +56,12 @@ void AbstractControllerApp::initialize(int stage){
     //register signals
     OperationalBase::initialize(stage);
     if (stage == INITSTAGE_LOCAL) {
-        getParentModule()->subscribe("PacketIn",this);
-        getParentModule()->subscribe("PacketOut",this);
-        getParentModule()->subscribe("PacketFeatureRequest",this);
-        getParentModule()->subscribe("PacketFeatureReply",this);
-        getParentModule()->subscribe("Booted",this);
+        getParentModule()->subscribe(PacketInSignalId, this);
+        getParentModule()->subscribe(PacketOutSignalId, this);
+        getParentModule()->subscribe(PacketFeatureRequestSignalId, this);
+        getParentModule()->subscribe(PacketFeatureReplySignalId, this);
+        getParentModule()->subscribe(PacketExperimenterSignalId, this);
+        getParentModule()->subscribe(BootedSignalId, this);
     }
     else if (stage == INITSTAGE_APPLICATION_LAYER) {
         auto myNode = getContainingNode(this);
