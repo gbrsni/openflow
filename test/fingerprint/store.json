@@ -1,0 +1,26 @@
+[
+ {
+  "working_directory": "scenarios/hyperflow/usa",
+  "ini_file": "Scenario_USA_ARP_HF_Ping_2C.ini",
+  "config": "General",
+  "run_number": 0,
+  "sim_time_limit": "100s",
+  "test_result": "PASS",
+  "ingredients": "tplx",
+  "fingerprint": "2ef6-d0c6",
+  "timestamp": 1741013303.4853597,
+  "itervars": "$repetition==0"
+ },
+ {
+  "working_directory": "scenarios/hyperflow/usa",
+  "ini_file": "Scenario_USA_ARP_HF_Ping_2C.ini",
+  "config": "General",
+  "run_number": 0,
+  "sim_time_limit": "100s",
+  "test_result": "PASS",
+  "ingredients": "~tNl",
+  "fingerprint": "015f-61f2",
+  "timestamp": 1741016808.413239,
+  "itervars": "$repetition==0"
+ }
+]
