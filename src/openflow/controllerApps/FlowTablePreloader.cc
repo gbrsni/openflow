@@ -15,6 +15,9 @@
 
 #include "FlowTablePreloader.h"
 
+Define_Module(FlowTablePreloader);
+
+
 FlowTablePreloader::FlowTablePreloader() {
 
 }
@@ -26,3 +29,17 @@ void FlowTablePreloader::initialize(int stage){
     AbstractControllerApp::initialize(stage);
 }
 
+void FlowTablePreloader::receiveSignal(cComponent *src, simsignal_t id, cObject *obj, cObject *details) {
+    AbstractControllerApp::receiveSignal(src,id,obj,details);
+    Enter_Method("Hub::receiveSignal %s", cComponent::getSignalName(id));
+    if(id == PacketInSignalId){
+        EV << "Hub::PacketIn" << '\n';
+        auto pkt = dynamic_cast<Packet *>(obj);
+        if (pkt != nullptr) {
+            auto chunk = pkt->peekAtFront<Chunk>();
+            auto packet_in_msg = dynamicPtrCast<const OFP_Packet_In>(chunk);
+            if (packet_in_msg != nullptr)
+                dropPacket(pkt);
+        }
+    }
+}
