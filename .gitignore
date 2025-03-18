@@ -7,3 +7,4 @@ src/openflow_exe
 src/*openflow_exe.*
 *_m.cc
 *_m.h
+*.dylib
