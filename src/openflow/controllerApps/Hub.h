@@ -15,6 +15,8 @@ public:
 protected:
     void receiveSignal(cComponent *src, simsignal_t id, cObject *obj, cObject *details) override;
     void initialize(int stage) override;
+    void doHubbing(Packet *packet_in_msg);
+    void sendFlowModFlood(TcpSocket* socket);
 };
 
 
