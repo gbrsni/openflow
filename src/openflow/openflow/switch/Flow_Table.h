@@ -6,7 +6,7 @@
 #include "openflow/openflow/protocol/openflow.h"
 #include "openflow/openflow/switch/Flow_Table_Entry.h"
 
-using namespace __gnu_cxx;
+//using namespace __gnu_cxx;
 
 
 
