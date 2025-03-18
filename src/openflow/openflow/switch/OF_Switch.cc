@@ -524,6 +524,22 @@ void OF_Switch::processFrame(Packet *pkt){
            if(hash !=0){
                emit(cpPingPacketHash,hash);
            }
+       } else if(outport == OFPP_FLOOD) { // TODO: My own stuff for flooding!
+           if(hash !=0){
+               emit(dpPingPacketHash,hash);
+           }
+           EV << "Flood Packet\n" << '\n';
+           unsigned int n = parent->gateSize("gateDataPlane$o");
+           for (unsigned int i=0; i<n; ++i) {
+               if(portVector[i].interfaceId != ifaceId && !(portVector[i].state & OFPPS_BLOCKED)){
+                   auto pktDup = pkt->dup();
+                   pktDup->removeTagIfPresent<DispatchProtocolReq>();
+                   pktDup->addTagIfAbsent<PacketProtocolTag>()->setProtocol(&Protocol::ethernetMac);
+                   pktDup->addTagIfAbsent<InterfaceReq>()->setInterfaceId(portVector[i].interfaceId );
+                   send(pktDup, "dataPlaneOut");
+               }
+           }
+
        } else {
            if(hash !=0){
                emit(dpPingPacketHash,hash);
