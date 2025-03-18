@@ -539,7 +539,6 @@ void OF_Switch::processFrame(Packet *pkt){
                    send(pktDup, "dataPlaneOut");
                }
            }
-
        } else {
            if(hash !=0){
                emit(dpPingPacketHash,hash);
