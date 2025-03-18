@@ -5,7 +5,7 @@
 #include "openflow/openflow/protocol/openflow.h"
 #include "inet/transportlayer/contract/tcp/TcpSocket.h"
 
-using namespace __gnu_cxx;
+//using namespace __gnu_cxx;
 
 class Switch_Info {
     public:

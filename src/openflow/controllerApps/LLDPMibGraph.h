@@ -7,7 +7,7 @@
 #include <string>
 #include <algorithm>
 
-using namespace __gnu_cxx;
+//using namespace __gnu_cxx;
 
 
 
