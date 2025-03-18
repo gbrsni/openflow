@@ -13,6 +13,7 @@ public:
 protected:
     void receiveSignal(cComponent *src, simsignal_t id, cObject *obj, cObject *details) override;
     void initialize(int stage) override;
+    void sendFlowTables(Packet* packet_in_msg);
 };
 
 #endif /* OPENFLOW_CONTROLLERAPPS_FLOWTABLEPRELOADER_H_ */
