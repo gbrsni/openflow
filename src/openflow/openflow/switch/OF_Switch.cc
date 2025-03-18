@@ -524,7 +524,7 @@ void OF_Switch::processFrame(Packet *pkt){
            if(hash !=0){
                emit(cpPingPacketHash,hash);
            }
-       } else if(outport == OFPP_FLOOD) { // TODO: My own stuff for flooding!
+       } else if(outport == OFPP_FLOOD) {
            if(hash !=0){
                emit(dpPingPacketHash,hash);
            }
