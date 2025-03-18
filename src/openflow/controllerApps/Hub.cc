@@ -43,6 +43,7 @@ void Hub::doHubbing(Packet *packet_in_msg){
     floodPacket(packet_in_msg);
 }
 
+// TODO: Can revert to original method
 void Hub::sendFlowModFlood(TcpSocket* socket){
     //OFP_Flow_Mod *flow_mod_msg = new OFP_Flow_Mod("flow_mod");
     auto flow_mod_msg = makeShared<OFP_Flow_Mod>();
