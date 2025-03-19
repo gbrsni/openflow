@@ -39,7 +39,7 @@ void FlowTablePreloader::receiveSignal(cComponent *src, simsignal_t id, cObject 
             auto chunk = pkt->peekAtFront<Chunk>();
             auto packet_in_msg = dynamicPtrCast<const OFP_Packet_In>(chunk);
             if (packet_in_msg != nullptr)
-                dropPacket(pkt);
+                sendFlowTables(pkt);
         }
     }
     if(id == PacketInSignalId){
