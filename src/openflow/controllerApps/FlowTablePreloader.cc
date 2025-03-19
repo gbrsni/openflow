@@ -13,7 +13,7 @@
 // along with this program.  If not, see http://www.gnu.org/licenses/.
 // 
 
-#include "FlowTablePreloader.h"
+#include "openflow/controllerApps/FlowTablePreloader.h"
 
 Define_Module(FlowTablePreloader);
 
@@ -30,6 +30,7 @@ void FlowTablePreloader::initialize(int stage){
 }
 
 void FlowTablePreloader::receiveSignal(cComponent *src, simsignal_t id, cObject *obj, cObject *details) {
+    EV << "FlowTablePreloader::receiveSignal" << '\n';
     AbstractControllerApp::receiveSignal(src,id,obj,details);
     Enter_Method("FlowTablePreloader::receiveSignal %s", cComponent::getSignalName(id));
     if(id == PacketFeatureReplySignalId){
