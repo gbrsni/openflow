@@ -14,6 +14,9 @@ protected:
     void receiveSignal(cComponent *src, simsignal_t id, cObject *obj, cObject *details) override;
     void initialize(int stage) override;
     void sendFlowTables(Packet* packet_in_msg);
+
+    Flow_Table flowTable;
+    void readFlowtableConfiguration(Flow_Table& flowTable);
 };
 
 #endif /* OPENFLOW_CONTROLLERAPPS_FLOWTABLEPRELOADER_H_ */

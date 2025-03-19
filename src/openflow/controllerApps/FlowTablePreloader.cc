@@ -28,6 +28,23 @@ FlowTablePreloader::~FlowTablePreloader() {
 
 void FlowTablePreloader::initialize(int stage){
     AbstractControllerApp::initialize(stage);
+    readFlowtableConfiguration(Flow_Table& flowTable);
+}
+
+void FlowTablePreloader::readFlowtableConfiguration(Flow_Table& flowTable) {
+    using namespace xmlutils;
+
+    cXMLElementList entryElements = configuration->getChildrenByTagName("entry");
+
+    for (auto& entryElement : entryElements) {
+        const char* action_outputAttr = entryElement->getAttribute("action_output"); // I don't like mixing cases like this but trying to follow multiple standards led to this...
+
+        try {
+            Matcher outputMatcher(action_outputAttr);
+        } catch (std::exception& e) {
+            throw cRuntimeError("Error in XML <entry> element at %s: %s", entryElement->getSourceLocation(), e.what());
+        }
+    }
 }
 
 void FlowTablePreloader::receiveSignal(cComponent *src, simsignal_t id, cObject *obj, cObject *details) {
