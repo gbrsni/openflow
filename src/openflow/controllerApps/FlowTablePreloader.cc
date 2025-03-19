@@ -65,7 +65,7 @@ void FlowTablePreloader::sendFlowTables(Packet* packet_in_msg){
     auto socket = controller->findSocketFor(packet_in_msg);
 
     int idleTimeout = -1;
-    int hardTimeout = 0;
+    int hardTimeout = -1;
 
     sendFlowModMessage(OFPFC_ADD, match, outport, socket, idleTimeout, hardTimeout);
 }
