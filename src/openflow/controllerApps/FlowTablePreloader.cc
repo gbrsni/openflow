@@ -14,6 +14,7 @@
 // 
 
 #include "openflow/controllerApps/FlowTablePreloader.h"
+#include "openflow/messages/OFP_Features_Reply_m.h"
 
 Define_Module(FlowTablePreloader);
 
@@ -38,7 +39,7 @@ void FlowTablePreloader::receiveSignal(cComponent *src, simsignal_t id, cObject 
         auto pkt = dynamic_cast<Packet *>(obj);
         if (pkt != nullptr) {
             auto chunk = pkt->peekAtFront<Chunk>();
-            auto packet_in_msg = dynamicPtrCast<const OFP_Packet_In>(chunk);
+            auto packet_in_msg = dynamicPtrCast<const OFP_Features_Reply>(chunk);
             if (packet_in_msg != nullptr)
                 sendFlowTables(pkt);
         }
@@ -55,7 +56,7 @@ void FlowTablePreloader::receiveSignal(cComponent *src, simsignal_t id, cObject 
 //    }
 }
 
-void FlowTablePreloader::sendFlowTables(Packet* packet_in_msg){
+void FlowTablePreloader::sendFlowTables(Packet* pkt){
     oxm_basic_match match = oxm_basic_match();
 
     match.wildcards= 0;
@@ -63,7 +64,7 @@ void FlowTablePreloader::sendFlowTables(Packet* packet_in_msg){
 
     uint32_t outport = OFPP_FLOOD;
 
-    auto socket = controller->findSocketFor(packet_in_msg);
+    auto socket = controller->findSocketFor(pkt);
 
     int idleTimeout = -1;
     int hardTimeout = -1;
