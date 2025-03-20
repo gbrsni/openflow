@@ -45,8 +45,8 @@ void FlowTablePreloader::readFlowtableConfiguration() {
 
         try {
             outport = static_cast<uint32_t>(std::stoul(action_outputAttr));
-            idleTimeout = static_cast<uint32_t>(std::stoul(action_outputAttr));
-            hardTimeout = static_cast<uint32_t>(std::stoul(action_outputAttr));
+            idleTimeout = static_cast<int>(std::stoul(idleTimeoutAttr));
+            hardTimeout = static_cast<int>(std::stoul(hardTimeoutAttr));
         } catch (std::exception& e) {
             throw cRuntimeError("Error in XML <entry> element at %s: %s", entryElement->getSourceLocation(), e.what());
         }
@@ -72,42 +72,94 @@ void FlowTablePreloader::readFlowtableConfiguration() {
 
             const char* wildcardsAttr = entryElement->getAttribute("wildcards");
 
-            int in_port;
+            int* in_port;
 
-            MacAddress eth_dst;
-            MacAddress eth_src;
-            int eth_type;
+            MacAddress* eth_dst;
+            MacAddress* eth_src;
+            int* eth_type;
 
-            Ipv4Address ipv4_dst;
+            Ipv4Address* ipv4_dst;
 
-            int arp_op;
-            Ipv4Address arp_spa;
-            Ipv4Address arp_tpa;
-            MacAddress arp_sha;
-            MacAddress arp_tha;
+            int* arp_op;
+            Ipv4Address* arp_spa;
+            Ipv4Address* arp_tpa;
+            MacAddress* arp_sha;
+            MacAddress* arp_tha;
 
-            uint32_t wildcards;
+            uint32_t* wildcards;
 
             try {
-                in_port = static_cast<int>(std::stoul(action_outputAttr));
-
-                eth_dst = MacAddress(eth_dstAttr);
-                eth_src = MacAddress(eth_srcAttr);
-                eth_type = static_cast<int>(std::stoul(eth_typeAttr));
-
-                ipv4_dst = Ipv4Address(ipv4_dstAttr);
-
-                arp_op = static_cast<int>(std::stoul(arp_opAttr));
-                arp_spa = Ipv4Address(arp_spaAttr);
-                arp_tpa = Ipv4Address(arp_tpaAttr);
-                arp_sha = MacAddress(arp_shaAttr);
-                arp_tha = MacAddress(arp_thaAttr);
-
-                wildcards = static_cast<uint32_t>(std::stoul(wildcardsAttr));
+                *in_port = static_cast<int>(std::stoul(action_outputAttr));
             } catch (std::exception& e) {
-                throw cRuntimeError("Error in XML <match> element at %s: %s", matchElement->getSourceLocation(), e.what());
+                throw cRuntimeError("Error in XML <match> inport element at %s: %s", matchElement->getSourceLocation(), e.what());
+                in_port = nullptr;
             }
 
+            try {
+                *eth_dst = MacAddress(eth_dstAttr);
+            } catch (std::exception& e) {
+                throw cRuntimeError("Error in XML <match> eth_dst element at %s: %s", matchElement->getSourceLocation(), e.what());
+                eth_dst = nullptr;
+            }
+            try {
+                *eth_src = MacAddress(eth_srcAttr);
+            } catch (std::exception& e) {
+                throw cRuntimeError("Error in XML <match> eth_src element at %s: %s", matchElement->getSourceLocation(), e.what());
+                eth_src = nullptr;
+            }
+            try {
+                *eth_type = static_cast<int>(std::stoul(eth_typeAttr));
+            } catch (std::exception& e) {
+                throw cRuntimeError("Error in XML <match> eth_type element at %s: %s", matchElement->getSourceLocation(), e.what());
+                eth_type = nullptr;
+            }
+
+            try {
+                *ipv4_dst = Ipv4Address(ipv4_dstAttr);
+            } catch (std::exception& e) {
+                throw cRuntimeError("Error in XML <match> ipv4_dst element at %s: %s", matchElement->getSourceLocation(), e.what());
+                ipv4_dst = nullptr;
+            }
+
+            try {
+                *arp_op = static_cast<int>(std::stoul(arp_opAttr));
+            } catch (std::exception& e) {
+                throw cRuntimeError("Error in XML <match> arp_op element at %s: %s", matchElement->getSourceLocation(), e.what());
+                arp_op = nullptr;
+            }
+            try {
+                *arp_spa = Ipv4Address(arp_spaAttr);
+            } catch (std::exception& e) {
+                throw cRuntimeError("Error in XML <match> arp_spa element at %s: %s", matchElement->getSourceLocation(), e.what());
+                arp_spa = nullptr;
+            }
+            try {
+                *arp_tpa = Ipv4Address(arp_tpaAttr);
+            } catch (std::exception& e) {
+                throw cRuntimeError("Error in XML <match> arp_tpa element at %s: %s", matchElement->getSourceLocation(), e.what());
+                arp_tpa = nullptr;
+            }
+            try {
+                *arp_sha = MacAddress(arp_shaAttr);
+            } catch (std::exception& e) {
+                throw cRuntimeError("Error in XML <match> arp_sha element at %s: %s", matchElement->getSourceLocation(), e.what());
+                arp_sha = nullptr;
+            }
+            try {
+                *arp_tha = MacAddress(arp_thaAttr);
+            } catch (std::exception& e) {
+                throw cRuntimeError("Error in XML <match> arp_tha element at %s: %s", matchElement->getSourceLocation(), e.what());
+                arp_tha = nullptr;
+            }
+
+            try {
+                *wildcards = static_cast<uint32_t>(std::stoul(wildcardsAttr));
+            } catch (std::exception& e) {
+                throw cRuntimeError("Error in XML <match> wildcards element at %s: %s", matchElement->getSourceLocation(), e.what());
+                wildcards = nullptr;
+            }
+
+            match.wildcards = *wildcards;
         }
     }
 }
