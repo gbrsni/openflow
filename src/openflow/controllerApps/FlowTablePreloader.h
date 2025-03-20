@@ -21,7 +21,7 @@ protected:
     int idleTimeout;
     int hardTimeout;
     oxm_basic_match match;
-    void readFlowtableConfiguration(Flow_Table& flowTable);
+    void readFlowtableConfiguration();
 };
 
 #endif /* OPENFLOW_CONTROLLERAPPS_FLOWTABLEPRELOADER_H_ */

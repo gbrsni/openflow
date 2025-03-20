@@ -30,10 +30,10 @@ FlowTablePreloader::~FlowTablePreloader() {
 void FlowTablePreloader::initialize(int stage){
     AbstractControllerApp::initialize(stage);
     configuration = par("config");
-    readFlowtableConfiguration(flowTable);
+    readFlowtableConfiguration();
 }
 
-void FlowTablePreloader::readFlowtableConfiguration(Flow_Table& flowTable) {
+void FlowTablePreloader::readFlowtableConfiguration() {
     using namespace xmlutils;
 
     cXMLElementList entryElements = configuration->getChildrenByTagName("entry");
@@ -87,7 +87,13 @@ void FlowTablePreloader::readFlowtableConfiguration(Flow_Table& flowTable) {
             MacAddress arp_tha;
 
             try {
+                in_port = static_cast<int>(std::stoul(action_outputAttr));
 
+                eth_dst = MacAddress(eth_dstAttr);
+                eth_src = MacAddress(eth_srcAttr);
+                eth_type = static_cast<int>(std::stoul(eth_typeAttr));
+
+                ipv4_dst = Ipv4Address(ipv4_dstAttr);
             } catch (std::exception& e) {
                 throw cRuntimeError("Error in XML <match> element at %s: %s", matchElement->getSourceLocation(), e.what());
             }
