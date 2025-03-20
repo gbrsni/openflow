@@ -83,7 +83,6 @@ void FlowTablePreloader::readFlowtableConfiguration(Flow_Table& flowTable) {
             MacAddress OFB_ARP_SHA;
             MacAddress OFB_ARP_THA;
 
-            const char* hardTimeoutAttr = entryElement->getAttribute("hardTimeout");
             try {
             } catch (std::exception& e) {
                 throw cRuntimeError("Error in XML <match> element at %s: %s", matchElement->getSourceLocation(), e.what());
