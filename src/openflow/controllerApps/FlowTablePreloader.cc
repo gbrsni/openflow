@@ -72,18 +72,22 @@ void FlowTablePreloader::readFlowtableConfiguration(Flow_Table& flowTable) {
 
             const char* wildcardsAttr = entryElement->getAttribute("wildcards");
 
-            int OFB_IN_PORT;
-            MacAddress OFB_ETH_DST;
-            MacAddress OFB_ETH_SRC;
-            int OFB_ETH_TYPE;
-            Ipv4Address OFB_IPV4_DST;
-            int OFB_ARP_OP;
-            Ipv4Address OFB_ARP_SPA;
-            Ipv4Address OFB_ARP_TPA;
-            MacAddress OFB_ARP_SHA;
-            MacAddress OFB_ARP_THA;
+            int in_port;
+
+            MacAddress eth_dst;
+            MacAddress eth_src;
+            int eth_type;
+
+            Ipv4Address ipv4_dst;
+
+            int arp_op;
+            Ipv4Address arp_spa;
+            Ipv4Address arp_tpa;
+            MacAddress arp_sha;
+            MacAddress arp_tha;
 
             try {
+
             } catch (std::exception& e) {
                 throw cRuntimeError("Error in XML <match> element at %s: %s", matchElement->getSourceLocation(), e.what());
             }
