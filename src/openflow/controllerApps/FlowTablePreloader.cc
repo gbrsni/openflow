@@ -28,7 +28,7 @@ FlowTablePreloader::~FlowTablePreloader() {
 
 void FlowTablePreloader::initialize(int stage){
     AbstractControllerApp::initialize(stage);
-    readFlowtableConfiguration(Flow_Table& flowTable);
+    readFlowtableConfiguration(flowTable);
 }
 
 void FlowTablePreloader::readFlowtableConfiguration(Flow_Table& flowTable) {
