@@ -54,7 +54,7 @@ void FlowTablePreloader::readFlowtableConfiguration() {
         cXMLElementList matchElements = configuration->getChildrenByTagName("match");
 
         for (auto& matchElement : matchElements) {
-            match = oxm_basic_match();
+//            local_match = oxm_basic_match();
 
             const char* in_portAttr = entryElement->getAttribute("in_port");
 
@@ -159,7 +159,43 @@ void FlowTablePreloader::readFlowtableConfiguration() {
                 wildcards = nullptr;
             }
 
-            match.wildcards = *wildcards;
+            if (in_port != nullptr) {
+                match.OFB_IN_PORT = *in_port;
+            }
+
+            if (eth_dst != nullptr) {
+                match.OFB_ETH_DST = *eth_dst;
+            }
+            if (eth_src != nullptr) {
+                match.OFB_ETH_SRC = *eth_src;
+            }
+            if (eth_type != nullptr) {
+                match.OFB_ETH_TYPE = *eth_type;
+            }
+
+            if (ipv4_dst != nullptr) {
+                match.OFB_IPV4_DST = *ipv4_dst;
+            }
+
+            if (arp_op != nullptr) {
+                match.OFB_ARP_OP = *arp_op;
+            }
+            if (arp_spa != nullptr) {
+                match.OFB_ARP_SPA = *arp_spa;
+            }
+            if (arp_tpa != nullptr) {
+                match.OFB_ARP_TPA = *arp_tpa;
+            }
+            if (arp_sha != nullptr) {
+                match.OFB_ARP_SHA = *arp_sha;
+            }
+            if (arp_tha != nullptr) {
+                match.OFB_ARP_THA = *arp_tha;
+            }
+
+            if (wildcards != nullptr) {
+                match.wildcards = *wildcards;
+            }
         }
     }
 }
