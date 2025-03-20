@@ -13,6 +13,8 @@
 // along with this program.  If not, see http://www.gnu.org/licenses/.
 // 
 
+#include "inet/common/XMLUtils.h"
+#include "inet/networklayer/configurator/base/L3NetworkConfiguratorBase.h"
 #include "openflow/controllerApps/FlowTablePreloader.h"
 #include "openflow/messages/OFP_Features_Reply_m.h"
 
@@ -28,6 +30,7 @@ FlowTablePreloader::~FlowTablePreloader() {
 
 void FlowTablePreloader::initialize(int stage){
     AbstractControllerApp::initialize(stage);
+    configuration = par("config");
     readFlowtableConfiguration(flowTable);
 }
 
@@ -40,7 +43,7 @@ void FlowTablePreloader::readFlowtableConfiguration(Flow_Table& flowTable) {
         const char* action_outputAttr = entryElement->getAttribute("action_output"); // I don't like mixing cases like this but trying to follow multiple standards led to this...
 
         try {
-            Matcher outputMatcher(action_outputAttr);
+            inet::L3NetworkConfiguratorBase::Matcher outputMatcher(action_outputAttr);
         } catch (std::exception& e) {
             throw cRuntimeError("Error in XML <entry> element at %s: %s", entryElement->getSourceLocation(), e.what());
         }
