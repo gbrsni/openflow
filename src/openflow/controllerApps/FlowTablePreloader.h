@@ -17,7 +17,10 @@ protected:
     void sendFlowTables(Packet* packet_in_msg);
 
     cXMLElement *configuration = nullptr;
-    Flow_Table flowTable;
+    uint32_t outport;
+    int idleTimeout;
+    int hardTimeout;
+    oxm_basic_match match;
     void readFlowtableConfiguration(Flow_Table& flowTable);
 };
 

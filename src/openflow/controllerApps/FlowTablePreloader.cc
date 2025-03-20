@@ -14,7 +14,6 @@
 // 
 
 #include "inet/common/XMLUtils.h"
-#include "inet/networklayer/configurator/base/L3NetworkConfiguratorBase.h"
 #include "openflow/controllerApps/FlowTablePreloader.h"
 #include "openflow/messages/OFP_Features_Reply_m.h"
 
@@ -41,11 +40,55 @@ void FlowTablePreloader::readFlowtableConfiguration(Flow_Table& flowTable) {
 
     for (auto& entryElement : entryElements) {
         const char* action_outputAttr = entryElement->getAttribute("action_output"); // I don't like mixing cases like this but trying to follow multiple standards led to this...
+        const char* idleTimeoutAttr = entryElement->getAttribute("idleTimeout");
+        const char* hardTimeoutAttr = entryElement->getAttribute("hardTimeout");
 
         try {
-            inet::L3NetworkConfiguratorBase::Matcher outputMatcher(action_outputAttr);
+            outport = static_cast<uint32_t>(std::stoul(action_outputAttr));
+            idleTimeout = static_cast<uint32_t>(std::stoul(action_outputAttr));
+            hardTimeout = static_cast<uint32_t>(std::stoul(action_outputAttr));
         } catch (std::exception& e) {
             throw cRuntimeError("Error in XML <entry> element at %s: %s", entryElement->getSourceLocation(), e.what());
+        }
+
+        cXMLElementList matchElements = configuration->getChildrenByTagName("match");
+
+        for (auto& matchElement : matchElements) {
+            match = oxm_basic_match();
+
+            const char* in_portAttr = entryElement->getAttribute("in_port");
+
+            const char* eth_dstAttr = entryElement->getAttribute("eth_dst");
+            const char* eth_srcAttr = entryElement->getAttribute("eth_src");
+            const char* eth_typeAttr = entryElement->getAttribute("eth_type");
+
+            const char* ipv4_dstAttr = entryElement->getAttribute("ipv4_dst");
+
+            const char* arp_opAttr = entryElement->getAttribute("arp_op");
+            const char* arp_spaAttr = entryElement->getAttribute("arp_spa");
+            const char* arp_tpaAttr = entryElement->getAttribute("arp_tpa");
+            const char* arp_shaAttr = entryElement->getAttribute("arp_sha");
+            const char* arp_thaAttr = entryElement->getAttribute("arp_tha");
+
+            const char* wildcardsAttr = entryElement->getAttribute("wildcards");
+
+            int OFB_IN_PORT;
+            MacAddress OFB_ETH_DST;
+            MacAddress OFB_ETH_SRC;
+            int OFB_ETH_TYPE;
+            Ipv4Address OFB_IPV4_DST;
+            int OFB_ARP_OP;
+            Ipv4Address OFB_ARP_SPA;
+            Ipv4Address OFB_ARP_TPA;
+            MacAddress OFB_ARP_SHA;
+            MacAddress OFB_ARP_THA;
+
+            const char* hardTimeoutAttr = entryElement->getAttribute("hardTimeout");
+            try {
+            } catch (std::exception& e) {
+                throw cRuntimeError("Error in XML <match> element at %s: %s", matchElement->getSourceLocation(), e.what());
+            }
+
         }
     }
 }
