@@ -227,17 +227,17 @@ void FlowTablePreloader::receiveSignal(cComponent *src, simsignal_t id, cObject 
 }
 
 void FlowTablePreloader::sendFlowTables(Packet* pkt){
-    oxm_basic_match match = oxm_basic_match();
-
-    match.wildcards= 0;
-    match.wildcards |= OFPFW_ALL;
-
-    uint32_t outport = OFPP_FLOOD;
+//    oxm_basic_match match = oxm_basic_match();
+//
+//    match.wildcards= 0;
+//    match.wildcards |= OFPFW_ALL;
+//
+//    uint32_t outport = OFPP_FLOOD;
 
     auto socket = controller->findSocketFor(pkt);
 
-    int idleTimeout = -1;
-    int hardTimeout = -1;
+//    int idleTimeout = -1;
+//    int hardTimeout = -1;
 
     sendFlowModMessage(OFPFC_ADD, match, outport, socket, idleTimeout, hardTimeout);
 }
