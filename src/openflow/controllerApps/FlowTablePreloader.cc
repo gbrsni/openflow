@@ -86,6 +86,8 @@ void FlowTablePreloader::readFlowtableConfiguration() {
             MacAddress arp_sha;
             MacAddress arp_tha;
 
+            uint32_t wildcards;
+
             try {
                 in_port = static_cast<int>(std::stoul(action_outputAttr));
 
@@ -94,6 +96,14 @@ void FlowTablePreloader::readFlowtableConfiguration() {
                 eth_type = static_cast<int>(std::stoul(eth_typeAttr));
 
                 ipv4_dst = Ipv4Address(ipv4_dstAttr);
+
+                arp_op = static_cast<int>(std::stoul(arp_opAttr));
+                arp_spa = Ipv4Address(arp_spaAttr);
+                arp_tpa = Ipv4Address(arp_tpaAttr);
+                arp_sha = MacAddress(arp_shaAttr);
+                arp_tha = MacAddress(arp_thaAttr);
+
+                wildcards = static_cast<uint32_t>(std::stoul(wildcardsAttr));
             } catch (std::exception& e) {
                 throw cRuntimeError("Error in XML <match> element at %s: %s", matchElement->getSourceLocation(), e.what());
             }
