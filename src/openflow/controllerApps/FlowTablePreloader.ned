@@ -19,5 +19,5 @@ simple FlowTablePreloader like AbstractControllerApp
 {
     parameters:
         @display("i=block/app");
-        
+        xml config = default(xml(""));
 }
