@@ -207,11 +207,8 @@ void FlowTablePreloader::readFlowtableConfiguration() {
             }
 
             if (wildcards != nullptr) {
-                EV_WARN << "Wildcards: " << *wildcards << "\n";
                 match.wildcards = *wildcards;
                 debug = *wildcards;
-            } else {
-                EV_WARN << "No wildcards" << "\n";
             }
 //        }
     }
@@ -219,11 +216,6 @@ void FlowTablePreloader::readFlowtableConfiguration() {
 
 void FlowTablePreloader::receiveSignal(cComponent *src, simsignal_t id, cObject *obj, cObject *details) {
     EV << "FlowTablePreloader::receiveSignal" << '\n';
-
-    EV_WARN << "Match wildcards: " << match.wildcards << "\n";
-    EV_WARN << "Match wildcards debug: " << debug << "\n";
-    EV_WARN << "Match in_port: " << match.OFB_IN_PORT << "\n";
-    EV_WARN << "idle timeout: " << idleTimeout << "\n";
 
     AbstractControllerApp::receiveSignal(src,id,obj,details);
     Enter_Method("FlowTablePreloader::receiveSignal %s", cComponent::getSignalName(id));
@@ -250,17 +242,8 @@ void FlowTablePreloader::receiveSignal(cComponent *src, simsignal_t id, cObject 
 }
 
 void FlowTablePreloader::sendFlowTables(Packet* pkt){
-//    oxm_basic_match match = oxm_basic_match();
-//
-//    match.wildcards= 0;
-//    match.wildcards |= OFPFW_ALL;
-//
-//    uint32_t outport = OFPP_FLOOD;
 
     auto socket = controller->findSocketFor(pkt);
-
-//    int idleTimeout = -1;
-//    int hardTimeout = -1;
 
     sendFlowModMessage(OFPFC_ADD, match, outport, socket, idleTimeout, hardTimeout);
 }

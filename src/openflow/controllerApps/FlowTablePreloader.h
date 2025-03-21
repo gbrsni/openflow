@@ -22,7 +22,6 @@ protected:
     int idleTimeout;
     int hardTimeout;
     oxm_basic_match match;
-    uint32_t debug;
     void readFlowtableConfiguration();
 };
 
