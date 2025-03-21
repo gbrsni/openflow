@@ -5,6 +5,7 @@ out
 src/Makefile
 src/openflow_exe
 src/*openflow_exe.*
+src/*.so
 *_m.cc
 *_m.h
 *.dylib
