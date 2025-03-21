@@ -19,5 +19,5 @@ simple FlowTablePreloader like AbstractControllerApp
 {
     parameters:
         @display("i=block/app");
-        xml config = default(xml(""));
+        xml config = default(xml("<config><entry action_output='4294967291' idleTimeout='-1' hardTimeout='-1' priority='0' in_port='' eth_dst='' eth_src='' eth_type='' ipv4_dst='' arp_op='' arp_spa='' arp_tpa='' arp_sha='' arp_tha='' wildcards='4194303'/></config>"));
 }
