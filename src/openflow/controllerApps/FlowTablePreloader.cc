@@ -208,7 +208,6 @@ void FlowTablePreloader::readFlowtableConfiguration() {
 
             if (wildcards != nullptr) {
                 match.wildcards = *wildcards;
-                debug = *wildcards;
             }
 //        }
     }
