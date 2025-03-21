@@ -17,6 +17,7 @@ protected:
     void sendFlowTables(Packet* packet_in_msg);
 
     cXMLElement *configuration = nullptr;
+    bool flowConfigRead = false;
     uint32_t outport;
     int idleTimeout;
     int hardTimeout;

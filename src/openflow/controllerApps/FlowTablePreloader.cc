@@ -30,10 +30,14 @@ FlowTablePreloader::~FlowTablePreloader() {
 void FlowTablePreloader::initialize(int stage){
     AbstractControllerApp::initialize(stage);
     configuration = par("config");
-    readFlowtableConfiguration();
+    if (!flowConfigRead) {
+        readFlowtableConfiguration();
+    }
 }
 
 void FlowTablePreloader::readFlowtableConfiguration() {
+    flowConfigRead = true;
+
     using namespace xmlutils;
 
     match = oxm_basic_match();
@@ -88,7 +92,7 @@ void FlowTablePreloader::readFlowtableConfiguration() {
             MacAddress* arp_sha;
             MacAddress* arp_tha;
 
-            uint32_t* wildcards;
+            uint32_t* wildcards = (uint32_t*)malloc(sizeof(uint32_t));;
 
             try {
                 *in_port = static_cast<int>(std::stoul(in_portAttr));
@@ -98,13 +102,15 @@ void FlowTablePreloader::readFlowtableConfiguration() {
             }
 
             try {
-                *eth_dst = MacAddress(eth_dstAttr);
+                MacAddress o_eth_dst = MacAddress(eth_dstAttr);
+                eth_dst = &o_eth_dst;
             } catch (std::exception& e) {
 //                throw cRuntimeError("Error in XML <entry> eth_dst element at %s: %s", entryElement->getSourceLocation(), e.what());
                 eth_dst = nullptr;
             }
             try {
-                *eth_src = MacAddress(eth_srcAttr);
+                MacAddress o_eth_src = MacAddress(eth_srcAttr);
+                eth_src = &o_eth_src;
             } catch (std::exception& e) {
 //                throw cRuntimeError("Error in XML <entry> eth_src element at %s: %s", entryElement->getSourceLocation(), e.what());
                 eth_src = nullptr;
@@ -117,7 +123,8 @@ void FlowTablePreloader::readFlowtableConfiguration() {
             }
 
             try {
-                *ipv4_dst = Ipv4Address(ipv4_dstAttr);
+                Ipv4Address o_ipv4_dst = Ipv4Address(ipv4_dstAttr);
+                ipv4_dst = &o_ipv4_dst;
             } catch (std::exception& e) {
 //                throw cRuntimeError("Error in XML <entry> ipv4_dst element at %s: %s", entryElement->getSourceLocation(), e.what());
                 ipv4_dst = nullptr;
@@ -130,25 +137,29 @@ void FlowTablePreloader::readFlowtableConfiguration() {
                 arp_op = nullptr;
             }
             try {
-                *arp_spa = Ipv4Address(arp_spaAttr);
+                Ipv4Address o_arp_spa = Ipv4Address(arp_spaAttr);
+                arp_spa = &o_arp_spa;
             } catch (std::exception& e) {
 //                throw cRuntimeError("Error in XML <entry> arp_spa element at %s: %s", entryElement->getSourceLocation(), e.what());
                 arp_spa = nullptr;
             }
             try {
-                *arp_tpa = Ipv4Address(arp_tpaAttr);
+                Ipv4Address o_arp_tpa = Ipv4Address(arp_tpaAttr);
+                arp_tpa = &o_arp_tpa;
             } catch (std::exception& e) {
 //                throw cRuntimeError("Error in XML <entry> arp_tpa element at %s: %s", entryElement->getSourceLocation(), e.what());
                 arp_tpa = nullptr;
             }
             try {
-                *arp_sha = MacAddress(arp_shaAttr);
+                MacAddress o_arp_sha = MacAddress(arp_shaAttr);
+                arp_sha = &o_arp_sha;
             } catch (std::exception& e) {
 //                throw cRuntimeError("Error in XML <entry> arp_sha element at %s: %s", entryElement->getSourceLocation(), e.what());
                 arp_sha = nullptr;
             }
             try {
-                *arp_tha = MacAddress(arp_thaAttr);
+                MacAddress o_arp_tha = MacAddress(arp_thaAttr);
+                arp_tha = &o_arp_tha;
             } catch (std::exception& e) {
 //                throw cRuntimeError("Error in XML <entry> arp_tha element at %s: %s", entryElement->getSourceLocation(), e.what());
                 arp_tha = nullptr;
@@ -196,7 +207,7 @@ void FlowTablePreloader::readFlowtableConfiguration() {
             }
 
             if (wildcards != nullptr) {
-                EV_WARN << "Wildcards: " << wildcards << "\n";
+                EV_WARN << "Wildcards: " << *wildcards << "\n";
                 match.wildcards = *wildcards;
                 debug = *wildcards;
             } else {
