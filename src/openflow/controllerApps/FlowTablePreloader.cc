@@ -29,8 +29,9 @@ FlowTablePreloader::~FlowTablePreloader() {
 
 void FlowTablePreloader::initialize(int stage){
     AbstractControllerApp::initialize(stage);
-    configuration = par("config");
+
     if (!flowConfigRead) {
+        configuration = par("config");
         readFlowtableConfiguration();
         flowConfigRead = true;
     }
