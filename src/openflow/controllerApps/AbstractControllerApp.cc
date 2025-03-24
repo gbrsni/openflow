@@ -50,6 +50,8 @@ int AbstractControllerApp::getIndexFromId(int id) {
 }
 
 void AbstractControllerApp::initialize(int stage){
+    flowModEmittedSignal = registerSignal("flowModEmitted");
+
     //register signals
     OperationalBase::initialize(stage);
     if (stage == INITSTAGE_LOCAL) {
@@ -132,6 +134,9 @@ void AbstractControllerApp::sendPacket(Packet *packet_in_msg, uint32_t outport){
 void AbstractControllerApp::sendFlowModMessage(ofp_flow_mod_command mod_com, const oxm_basic_match &match, uint32_t outport, TcpSocket * socket, int idleTimeOut =1 , int hardTimeOut=0){
     if (controller == nullptr)
         throw cRuntimeError("Controller module is not initialized");
+
+    // TODO: Emit flow message
+    emit(flowModEmittedSignal, true);
 
     EV << "sendFlowModMessage" << '\n';
     numFlowMod++;

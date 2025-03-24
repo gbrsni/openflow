@@ -33,6 +33,9 @@ class AbstractControllerApp: public OperationalBase, public cListener {
 
     std::map<int, int> ifaceIndex;
 
+private:
+    simsignal_t flowModEmittedSignal;
+
 protected:
 
 

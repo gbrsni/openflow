@@ -25,6 +25,9 @@ package openflow.controllerApps;
 moduleinterface AbstractControllerApp
 {
     parameters:
+        @signal[flowModEmitted](type=bool);
+        @statistic[flowModEmittedCount](title="flow mod count"; source="flowModEmitted"; record=vector,stats; interpolationmode=none);
+        
         @signal[PacketIn];
         @signal[PacketOut];
         @signal[PacketFeatureRequest];
