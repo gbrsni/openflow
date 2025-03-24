@@ -32,11 +32,11 @@ void FlowTablePreloader::initialize(int stage){
     configuration = par("config");
     if (!flowConfigRead) {
         readFlowtableConfiguration();
+        flowConfigRead = true;
     }
 }
 
 void FlowTablePreloader::readFlowtableConfiguration() {
-    flowConfigRead = true;
 
     using namespace xmlutils;
 
