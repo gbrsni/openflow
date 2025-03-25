@@ -346,7 +346,7 @@ void OF_Switch::processQueuedMsg(Packet *data_msg){
                 case OFPT_FEATURES_REQUEST:
                     handleFeaturesRequestMessage(data_msg);
                     break;
-                case OFPT_FLOW_MOD:
+                case OFPT_FLOW_MOD: // TODO: Emit flow mod in
                     handleFlowModMessage(data_msg);
                     break;
                 case OFPT_PACKET_OUT:
