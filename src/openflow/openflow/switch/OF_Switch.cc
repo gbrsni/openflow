@@ -66,6 +66,8 @@ void OF_Switch::initialize(int stage){
         busy = false;
         sendCompletePacket = par("sendCompletePacket");
         //stats
+        flowModIn = registerSignal("flowModIn");
+
         dpPingPacketHash = registerSignal("dpPingPacketHash");
         cpPingPacketHash = registerSignal("cpPingPacketHash");
         queueSize = registerSignal("queueSize");
@@ -347,6 +349,8 @@ void OF_Switch::processQueuedMsg(Packet *data_msg){
                     handleFeaturesRequestMessage(data_msg);
                     break;
                 case OFPT_FLOW_MOD: // TODO: Emit flow mod in
+                    flowModCounter ++;
+                    emit(flowModIn, flowModCounter);
                     handleFlowModMessage(data_msg);
                     break;
                 case OFPT_PACKET_OUT:

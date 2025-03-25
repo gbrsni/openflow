@@ -39,6 +39,9 @@ protected:
     long flowTableMiss;
 
     //stats
+    simsignal_t flowModIn;
+    int flowModCounter = 0;
+
     simsignal_t dpPingPacketHash;
     simsignal_t cpPingPacketHash;
     simsignal_t queueSize;
