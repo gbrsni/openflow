@@ -12,6 +12,9 @@ public:
     ~FlowTablePreloader();
 
 protected:
+    simsignal_t flowModOut;
+    int flowModCounter = 0;
+
     void receiveSignal(cComponent *src, simsignal_t id, cObject *obj, cObject *details) override;
     void initialize(int stage) override;
     void sendFlowTables(Packet* packet_in_msg);

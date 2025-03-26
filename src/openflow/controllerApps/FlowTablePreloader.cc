@@ -30,6 +30,10 @@ FlowTablePreloader::~FlowTablePreloader() {
 void FlowTablePreloader::initialize(int stage){
     AbstractControllerApp::initialize(stage);
 
+    if (stage == INITSTAGE_LOCAL) {
+        flowModOut = registerSignal("flowModOut");
+    }
+
     if (!flowConfigRead) {
         configuration = par("config");
         readFlowtableConfiguration();
@@ -242,6 +246,8 @@ void FlowTablePreloader::receiveSignal(cComponent *src, simsignal_t id, cObject 
 }
 
 void FlowTablePreloader::sendFlowTables(Packet* pkt){
+    flowModCounter ++;
+    emit(flowModOut, flowModCounter);
 
     auto socket = controller->findSocketFor(pkt);
 
