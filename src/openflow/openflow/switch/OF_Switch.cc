@@ -25,6 +25,17 @@
 //#include "inet/applications/pingapp/PingPayload_m.h"
 //#include "inet/networklayer/ipv4/ICMPMessage.h"
 
+#include "inet/common/ModuleAccess.h"
+#include "inet/common/ProtocolTag_m.h"
+#include "inet/networklayer/diffserv/DiffservUtil.h"
+#include "inet/networklayer/diffserv/Dscp_m.h"
+
+#include "inet/linklayer/ethernet/common/Ethernet.h"
+#include "inet/linklayer/ethernet/common/EthernetMacHeader_m.h"
+
+#include "inet/networklayer/ipv4/Ipv4.h"
+#include "inet/networklayer/ipv4/Ipv4Header_m.h"
+
 
 #define MSGKIND_CONNECT                     1
 #define MSGKIND_SERVICETIME                 3
@@ -501,6 +512,34 @@ void OF_Switch::processFrame(Packet *pkt){
        //lookup successful
        flowTableHit++;
        EV << "Found entry in flow table." << '\n';
+       // TODO: Add ToS manipulation here
+       // from dscp
+       int dscp = 40;
+//       EV_DETAIL << "Marking packet with dscp=" << dscpToString(dscp) << "\n";
+
+       b offset(0);
+       auto protocol = pkt->getTag<PacketProtocolTag>()->getProtocol();
+
+       if (protocol->getLayer() == Protocol::LinkLayer) {
+           if (protocol == &Protocol::ethernetMac) {
+               auto ethHeader = pkt->peekDataAt<EthernetMacHeader>(offset);
+               if (isEth2Header(*ethHeader)) {
+                   offset += ethHeader->getChunkLength();
+                   protocol = ProtocolGroup::ethertype.getProtocol(ethHeader->getTypeOrLength());
+               }
+           }
+       }
+       if (protocol == &Protocol::ipv4) {
+           pkt->removeTagIfPresent<NetworkProtocolInd>();
+           auto ipv4Header = pkt->removeDataAt<Ipv4Header>(offset);
+           ipv4Header->setDscp(dscp);
+//           Ipv4::insertCrc(ipv4Header); // recalculate IP header checksum
+           auto networkProtocolInd = pkt->addTagIfAbsent<NetworkProtocolInd>();
+           networkProtocolInd->setProtocol(protocol);
+           networkProtocolInd->setNetworkProtocolHeader(ipv4Header);
+           pkt->insertDataAt(ipv4Header, offset);
+       }
+       // end from dscp
        ofp_action_output action_output = lookup->getInstructions();
        uint32_t outport = action_output.port;
        if(outport == OFPP_CONTROLLER){
