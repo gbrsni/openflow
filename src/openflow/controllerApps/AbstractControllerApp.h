@@ -73,7 +73,7 @@ protected:
     virtual Packet * createFloodPacketFromPacketIn(Packet *packet_in_msg);
     virtual Packet * createDropPacketFromPacketIn(Packet *packet_in_msg);
     virtual Packet * createPacketOutFromPacketIn(Packet *packet_in_msg, uint32_t outport);
-    virtual Packet * createFlowMod(ofp_flow_mod_command mod_com,const oxm_basic_match &match, uint32_t outport,int idleTimeOut, int hardTimeOut);
+    virtual Packet * createFlowMod(ofp_flow_mod_command mod_com,const oxm_basic_match &match, uint32_t outport,int idleTimeOut, int hardTimeOut, int dscp=0);
 
     bool chekIcmpEchoRequest(Packet *pkt, int &seqNumber, int &identifier);
     virtual CommonHeaderFields extractCommonHeaderFields(Packet *packet_in_msg);
@@ -84,7 +84,7 @@ protected:
     virtual void floodPacket(Packet *packet_in_msg);
     virtual void dropPacket(Packet *packet_in_msg);
     virtual void sendPacket(Packet *packet_in_msg, uint32_t outport);
-    virtual void sendFlowModMessage(ofp_flow_mod_command mod_com,const oxm_basic_match &match, uint32_t outport, TcpSocket *socket,int idleTimeOut, int hardTimeOut);
+    virtual void sendFlowModMessage(ofp_flow_mod_command mod_com,const oxm_basic_match &match, uint32_t outport, TcpSocket *socket,int idleTimeOut, int hardTimeOut, int dscp=0);
 
     // Lifecycle methods
     virtual void handleStartOperation(LifecycleOperation *operation) override;

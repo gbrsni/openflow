@@ -129,7 +129,7 @@ void AbstractControllerApp::sendPacket(Packet *packet_in_msg, uint32_t outport){
     controller->sendPacket(socket, msgAux);
 }
 
-void AbstractControllerApp::sendFlowModMessage(ofp_flow_mod_command mod_com, const oxm_basic_match &match, uint32_t outport, TcpSocket * socket, int idleTimeOut =1 , int hardTimeOut=0){
+void AbstractControllerApp::sendFlowModMessage(ofp_flow_mod_command mod_com, const oxm_basic_match &match, uint32_t outport, TcpSocket * socket, int idleTimeOut =1 , int hardTimeOut=0, int dscp){
     if (controller == nullptr)
         throw cRuntimeError("Controller module is not initialized");
 
@@ -150,7 +150,7 @@ void AbstractControllerApp::finish(){
 
 
 //OFP_Flow_Mod * AbstractControllerApp::createFlowMod(ofp_flow_mod_command mod_com,const oxm_basic_match  &match, uint32_t outport, int idleTimeOut =1 , int hardTimeOut=0){
-Packet * AbstractControllerApp::createFlowMod(ofp_flow_mod_command mod_com,const oxm_basic_match  &match, uint32_t outport, int idleTimeOut =1 , int hardTimeOut=0, int dscp=0){
+Packet * AbstractControllerApp::createFlowMod(ofp_flow_mod_command mod_com,const oxm_basic_match  &match, uint32_t outport, int idleTimeOut =1 , int hardTimeOut=0, int dscp){
     //OFP_Flow_Mod *flow_mod_msg = new OFP_Flow_Mod("flow_mod");
     auto flow_mod_msg = makeShared<OFP_Flow_Mod>();
     auto pkt = new Packet("flow_mod");
