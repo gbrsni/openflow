@@ -150,10 +150,13 @@ void AbstractControllerApp::finish(){
 
 
 //OFP_Flow_Mod * AbstractControllerApp::createFlowMod(ofp_flow_mod_command mod_com,const oxm_basic_match  &match, uint32_t outport, int idleTimeOut =1 , int hardTimeOut=0){
-Packet * AbstractControllerApp::createFlowMod(ofp_flow_mod_command mod_com,const oxm_basic_match  &match, uint32_t outport, int idleTimeOut =1 , int hardTimeOut=0){
+Packet * AbstractControllerApp::createFlowMod(ofp_flow_mod_command mod_com,const oxm_basic_match  &match, uint32_t outport, int idleTimeOut =1 , int hardTimeOut=0, int dscp=0){
     //OFP_Flow_Mod *flow_mod_msg = new OFP_Flow_Mod("flow_mod");
     auto flow_mod_msg = makeShared<OFP_Flow_Mod>();
     auto pkt = new Packet("flow_mod");
+
+    // 0 = Best Effort by default
+    flow_mod_msg->setDscp(dscp);
 
     flow_mod_msg->getHeaderForUpdate().version = OFP_VERSION;
     flow_mod_msg->getHeaderForUpdate().type = OFPT_FLOW_MOD;
