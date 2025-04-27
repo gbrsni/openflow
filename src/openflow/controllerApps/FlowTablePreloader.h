@@ -23,6 +23,8 @@ protected:
     int hardTimeout;
     oxm_basic_match match;
     void readFlowtableConfiguration();
+
+    int dscp;
 };
 
 #endif /* OPENFLOW_CONTROLLERAPPS_FLOWTABLEPRELOADER_H_ */
