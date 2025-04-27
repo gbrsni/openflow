@@ -515,7 +515,7 @@ void OF_Switch::processFrame(Packet *pkt){
        // TODO: Add ToS manipulation here
        // from dscp
        int dscp = 40;
-//       EV_DETAIL << "Marking packet with dscp=" << dscpToString(dscp) << "\n";
+       EV_DETAIL << "Marking packet with dscp=" << inet::DiffservUtil::dscpToString(dscp) << "\n";
 
        b offset(0);
        auto protocol = pkt->getTag<PacketProtocolTag>()->getProtocol();
