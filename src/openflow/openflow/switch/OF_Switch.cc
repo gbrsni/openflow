@@ -514,7 +514,7 @@ void OF_Switch::processFrame(Packet *pkt){
        EV << "Found entry in flow table." << '\n';
        // TODO: Add ToS manipulation here
        // from dscp
-       int dscp = 40; // TODO: Get dscp from Flow_Table_Entry
+       int dscp = 0; // TODO: Get dscp from Flow_Table_Entry
        EV_DETAIL << "Marking packet with dscp=" << inet::DiffservUtil::dscpToString(dscp) << "\n";
 
        b offset(0);
