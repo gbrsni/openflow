@@ -63,7 +63,6 @@ void FlowTablePreloader::readFlowtableConfiguration() {
         try {
             dscp = static_cast<int>(std::stoul(dscpAttr));
         } catch (std::exception& e) {
-//            throw cRuntimeError("Error in XML <entry> element at %s: %s", entryElement->getSourceLocation(), e.what());
             // Use default value
             dscp = 0;
         }

@@ -135,7 +135,7 @@ void AbstractControllerApp::sendFlowModMessage(ofp_flow_mod_command mod_com, con
 
     EV << "sendFlowModMessage" << '\n';
     numFlowMod++;
-    auto msgAux = createFlowMod(mod_com,match,outport,idleTimeOut,hardTimeOut);
+    auto msgAux = createFlowMod(mod_com,match,outport,idleTimeOut,hardTimeOut, dscp);
     controller->sendPacket(socket, msgAux);
 }
 
