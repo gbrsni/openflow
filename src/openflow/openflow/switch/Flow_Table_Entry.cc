@@ -63,6 +63,10 @@ int Flow_Table_Entry::getPriority() const{
     return priority;
 }
 
+int Flow_Table_Entry::getDscp() const{
+    return dscp;
+}
+
 void Flow_Table_Entry::setCookie(flow_table_cookie cookie){
     this->cookie = cookie;
 }
@@ -97,4 +101,8 @@ void Flow_Table_Entry::setMatch(oxm_basic_match match){
 
 void Flow_Table_Entry::setPriority(int priority){
     this->priority = priority;
+}
+
+void Flow_Table_Entry::setDscp(int dscp){
+    this->dscp = dscp;
 }

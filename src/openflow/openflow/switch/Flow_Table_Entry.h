@@ -57,6 +57,8 @@ class Flow_Table_Entry {
         oxm_basic_match getMatch() const;
         int getPriority() const;
 
+        int getDscp() const;
+
         void setCookie(flow_table_cookie cookie);
         void setCounters(flow_table_counters counters);
         void setFlags(flow_table_flags flags);
@@ -66,6 +68,8 @@ class Flow_Table_Entry {
         void setInstructions(ofp_action_output instructions[1]);
         void setMatch(oxm_basic_match match);
         void setPriority(int priority);
+
+        void setDscp(int dscp);
 
     protected:
         oxm_basic_match match;
@@ -77,6 +81,8 @@ class Flow_Table_Entry {
         double idleTimeout;
         double hardTimeout;
         SimTime expiresAt;
+
+        int dscp;
 };
 
 #endif /* FLOW_TABLE_H_ */
