@@ -20,6 +20,8 @@ Flow_Table_Entry::Flow_Table_Entry(const OFP_Flow_Mod *flowModMsg){
     hardTimeout = flowModMsg->getHard_timeout();
     idleTimeout = flowModMsg->getIdle_timeout();
 
+    dscp = flowModMsg->getDscp();
+
     if(idleTimeout != 0){
         expiresAt = idleTimeout+simTime();
     } else {
