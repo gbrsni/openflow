@@ -37,5 +37,7 @@ class OFP_Flow_Mod extends Open_Flow_Message
     oxm_basic_match match; // Fields to match. Variable size.
     ofp_action_output actions[];
     //struct ofp_instruction instructions[0]; // Instruction set 
+    
+    int dscp;
 
 }
