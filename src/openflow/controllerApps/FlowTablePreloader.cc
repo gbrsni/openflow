@@ -60,11 +60,15 @@ void FlowTablePreloader::readFlowtableConfiguration() {
 
         const char* dscpAttr = entryElement->getAttribute("dscp");
 
-        try {
-            dscp = static_cast<int>(std::stoul(dscpAttr));
-        } catch (std::exception& e) {
-            // Use default value
+        if (dscpAttr == nullptr) {
             dscp = 0;
+        } else {
+            try {
+                dscp = static_cast<int>(std::stoul(dscpAttr));
+            } catch (std::exception& e) {
+                // Use default value
+                dscp = 0;
+            }
         }
 
 //        cXMLElementList matchElements = configuration->getChildrenByTagName("entry/match");
