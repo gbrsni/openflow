@@ -515,32 +515,33 @@ void OF_Switch::processFrame(Packet *pkt){
        //lookup successful
        flowTableHit++;
        EV << "Found entry in flow table." << '\n';
-       // TODO: Add ToS manipulation here
        // from dscp
        int dscp = lookup->getDscp();
-       EV_DETAIL << "Marking packet with dscp=" << inet::DiffservUtil::dscpToString(dscp) << "\n";
+       if (dscp != -1) {
+           EV_DETAIL << "Marking packet with dscp=" << inet::DiffservUtil::dscpToString(dscp) << "\n";
 
-       b offset(0);
-       auto protocol = pkt->getTag<PacketProtocolTag>()->getProtocol();
+           b offset(0);
+           auto protocol = pkt->getTag<PacketProtocolTag>()->getProtocol();
 
-       if (protocol->getLayer() == Protocol::LinkLayer) {
-           if (protocol == &Protocol::ethernetMac) {
-               auto ethHeader = pkt->peekDataAt<EthernetMacHeader>(offset);
-               if (isEth2Header(*ethHeader)) {
-                   offset += ethHeader->getChunkLength();
-                   protocol = ProtocolGroup::ethertype.getProtocol(ethHeader->getTypeOrLength());
+           if (protocol->getLayer() == Protocol::LinkLayer) {
+               if (protocol == &Protocol::ethernetMac) {
+                   auto ethHeader = pkt->peekDataAt<EthernetMacHeader>(offset);
+                   if (isEth2Header(*ethHeader)) {
+                       offset += ethHeader->getChunkLength();
+                       protocol = ProtocolGroup::ethertype.getProtocol(ethHeader->getTypeOrLength());
+                   }
                }
            }
-       }
-       if (protocol == &Protocol::ipv4) {
-           pkt->removeTagIfPresent<NetworkProtocolInd>();
-           auto ipv4Header = pkt->removeDataAt<Ipv4Header>(offset);
-           ipv4Header->setDscp(dscp);
-//           Ipv4::insertCrc(ipv4Header); // recalculate IP header checksum
-           auto networkProtocolInd = pkt->addTagIfAbsent<NetworkProtocolInd>();
-           networkProtocolInd->setProtocol(protocol);
-           networkProtocolInd->setNetworkProtocolHeader(ipv4Header);
-           pkt->insertDataAt(ipv4Header, offset);
+           if (protocol == &Protocol::ipv4) {
+               pkt->removeTagIfPresent<NetworkProtocolInd>();
+               auto ipv4Header = pkt->removeDataAt<Ipv4Header>(offset);
+               ipv4Header->setDscp(dscp);
+    //           Ipv4::insertCrc(ipv4Header); // recalculate IP header checksum
+               auto networkProtocolInd = pkt->addTagIfAbsent<NetworkProtocolInd>();
+               networkProtocolInd->setProtocol(protocol);
+               networkProtocolInd->setNetworkProtocolHeader(ipv4Header);
+               pkt->insertDataAt(ipv4Header, offset);
+           }
        }
        // end from dscp
        ofp_action_output action_output = lookup->getInstructions();
