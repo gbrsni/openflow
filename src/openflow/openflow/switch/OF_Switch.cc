@@ -221,7 +221,8 @@ void OF_Switch::socketDataArrived(TcpSocket *, Packet *msg, bool)
         cMessage *event = new cMessage("event");
         event->setKind(MSGKIND_SERVICETIME);
         event->setContextPointer(msg);
-        scheduleAt(simTime()+serviceTime, event);
+//        scheduleAt(simTime()+serviceTime, event);
+        scheduleAfter(serviceTime, event);
     }
     emit(queueSize,msgList.size());
     emit(bufferSize,buffer.size());
@@ -276,7 +277,8 @@ void OF_Switch::handleMessageWhenUp(cMessage *msg){
                 cMessage *event = new cMessage("event");
                 event->setKind(MSGKIND_SERVICETIME);
                 event->setContextPointer(msgFromList);
-                scheduleAt(simTime()+serviceTime, event);
+//                scheduleAt(simTime()+serviceTime, event);
+                scheduleAfter(serviceTime, event);
             }
         }
         //delete the msg for efficiency
@@ -293,7 +295,8 @@ void OF_Switch::handleMessageWhenUp(cMessage *msg){
                 cMessage *event = new cMessage("event");
                 event->setKind(MSGKIND_SERVICETIME);
                 event->setContextPointer(msg);
-                scheduleAt(simTime()+serviceTime, event);
+//                scheduleAt(simTime()+serviceTime, event);
+                scheduleAfter(serviceTime, event);
             }
             emit(queueSize,msgList.size());
             emit(bufferSize,buffer.size());
