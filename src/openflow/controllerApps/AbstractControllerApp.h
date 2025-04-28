@@ -84,7 +84,7 @@ protected:
     virtual void floodPacket(Packet *packet_in_msg);
     virtual void dropPacket(Packet *packet_in_msg);
     virtual void sendPacket(Packet *packet_in_msg, uint32_t outport);
-    virtual void sendFlowModMessage(ofp_flow_mod_command mod_com,const oxm_basic_match &match, uint32_t outport, TcpSocket *socket,int idleTimeOut, int hardTimeOut, int dscp=0);
+    virtual void sendFlowModMessage(ofp_flow_mod_command mod_com,const oxm_basic_match &match, uint32_t outport, TcpSocket *socket,int idleTimeOut, int hardTimeOut, int dscp=-1);
 
     // Lifecycle methods
     virtual void handleStartOperation(LifecycleOperation *operation) override;
