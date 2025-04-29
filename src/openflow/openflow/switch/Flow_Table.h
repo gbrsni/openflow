@@ -15,7 +15,7 @@ class Flow_Table {
 public:
     Flow_Table();
     void addEntry(Flow_Table_Entry entry);
-    Flow_Table_Entry * lookup(oxm_basic_match &match);
+    std::list<Flow_Table_Entry*> lookup(oxm_basic_match &match);
     void removeExpiredEntries();
 
 

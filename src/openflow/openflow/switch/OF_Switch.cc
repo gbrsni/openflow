@@ -510,7 +510,9 @@ void OF_Switch::processFrame(Packet *pkt){
 //    }
 
 
-   Flow_Table_Entry *lookup = flowTable.lookup(match);
+   std::list<Flow_Table_Entry*> entries = flowTable.lookup(match);
+   Flow_Table_Entry *lookup = (*entries.begin());
+
    if (lookup != NULL){
        //lookup successful
        flowTableHit++;
