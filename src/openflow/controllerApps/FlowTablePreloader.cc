@@ -115,15 +115,18 @@ void FlowTablePreloader::readFlowtableConfiguration() {
                 in_port = nullptr;
             }
 
+            MacAddress o_eth_dst;
             try {
-                MacAddress o_eth_dst = MacAddress(eth_dstAttr);
+                o_eth_dst = MacAddress(eth_dstAttr);
                 eth_dst = &o_eth_dst;
             } catch (std::exception& e) {
 //                throw cRuntimeError("Error in XML <entry> eth_dst element at %s: %s", entryElement->getSourceLocation(), e.what());
                 eth_dst = nullptr;
             }
+
+            MacAddress o_eth_src;
             try {
-                MacAddress o_eth_src = MacAddress(eth_srcAttr);
+                o_eth_src = MacAddress(eth_srcAttr);
                 eth_src = &o_eth_src;
             } catch (std::exception& e) {
 //                throw cRuntimeError("Error in XML <entry> eth_src element at %s: %s", entryElement->getSourceLocation(), e.what());
@@ -136,8 +139,9 @@ void FlowTablePreloader::readFlowtableConfiguration() {
                 eth_type = nullptr;
             }
 
+            Ipv4Address o_ipv4_dst;
             try {
-                Ipv4Address o_ipv4_dst = Ipv4Address(ipv4_dstAttr);
+                o_ipv4_dst = Ipv4Address(ipv4_dstAttr);
                 ipv4_dst = &o_ipv4_dst;
             } catch (std::exception& e) {
 //                throw cRuntimeError("Error in XML <entry> ipv4_dst element at %s: %s", entryElement->getSourceLocation(), e.what());
@@ -150,29 +154,37 @@ void FlowTablePreloader::readFlowtableConfiguration() {
 //                throw cRuntimeError("Error in XML <entry> arp_op element at %s: %s", entryElement->getSourceLocation(), e.what());
                 arp_op = nullptr;
             }
+
+            Ipv4Address o_arp_spa;
             try {
-                Ipv4Address o_arp_spa = Ipv4Address(arp_spaAttr);
+                o_arp_spa = Ipv4Address(arp_spaAttr);
                 arp_spa = &o_arp_spa;
             } catch (std::exception& e) {
 //                throw cRuntimeError("Error in XML <entry> arp_spa element at %s: %s", entryElement->getSourceLocation(), e.what());
                 arp_spa = nullptr;
             }
+
+            Ipv4Address o_arp_tpa;
             try {
-                Ipv4Address o_arp_tpa = Ipv4Address(arp_tpaAttr);
+                o_arp_tpa = Ipv4Address(arp_tpaAttr);
                 arp_tpa = &o_arp_tpa;
             } catch (std::exception& e) {
 //                throw cRuntimeError("Error in XML <entry> arp_tpa element at %s: %s", entryElement->getSourceLocation(), e.what());
                 arp_tpa = nullptr;
             }
+
+            MacAddress o_arp_sha;
             try {
-                MacAddress o_arp_sha = MacAddress(arp_shaAttr);
+                o_arp_sha = MacAddress(arp_shaAttr);
                 arp_sha = &o_arp_sha;
             } catch (std::exception& e) {
 //                throw cRuntimeError("Error in XML <entry> arp_sha element at %s: %s", entryElement->getSourceLocation(), e.what());
                 arp_sha = nullptr;
             }
+
+            MacAddress o_arp_tha;
             try {
-                MacAddress o_arp_tha = MacAddress(arp_thaAttr);
+                o_arp_tha = MacAddress(arp_thaAttr);
                 arp_tha = &o_arp_tha;
             } catch (std::exception& e) {
 //                throw cRuntimeError("Error in XML <entry> arp_tha element at %s: %s", entryElement->getSourceLocation(), e.what());
