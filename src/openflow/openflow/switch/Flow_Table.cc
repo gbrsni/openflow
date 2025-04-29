@@ -40,6 +40,7 @@ std::list<Flow_Table_Entry*> Flow_Table::lookup(oxm_basic_match &match) {
             if ((*iter).getIdleTimeout() != 0){
                 (*iter).setExpiresAt((*iter).getIdleTimeout()+simTime());
             }
+            EV << "Got a matching Flow Entry!" << '\n';
             matchingEntries.push_back(&(*iter));
         }
         ++iter;
