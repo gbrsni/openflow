@@ -511,45 +511,66 @@ void OF_Switch::processFrame(Packet *pkt){
 
 
    std::list<Flow_Table_Entry*> entries = flowTable.lookup(match);
-   Flow_Table_Entry *lookup = (*entries.begin());
 
-   if (lookup != NULL){
+   uint32_t outport = -1;
+
+   if ((*entries.begin()) != NULL){
        //lookup successful
        flowTableHit++;
-       EV << "Found entry in flow table." << '\n';
-       // from dscp
-       int dscp = lookup->getDscp();
-       if (dscp != -1) {
-           EV_DETAIL << "Marking packet with dscp=" << inet::DiffservUtil::dscpToString(dscp) << "\n";
+       EV << "Found entries in flow table." << '\n';
+       // TODO: Iterate entries
+       for(auto iter = entries.begin(); iter != entries.end();++iter) {
+           EV << "Looking through entry in flow table." << '\n';
+           Flow_Table_Entry *lookup = (*iter);
+           // from dscp
+           int dscp = lookup->getDscp();
+           if (dscp != -1) {
+               EV_DETAIL << "Marking packet with dscp=" << inet::DiffservUtil::dscpToString(dscp) << "\n";
 
-           b offset(0);
-           auto protocol = pkt->getTag<PacketProtocolTag>()->getProtocol();
+               b offset(0);
+               auto protocol = pkt->getTag<PacketProtocolTag>()->getProtocol();
 
-           if (protocol->getLayer() == Protocol::LinkLayer) {
-               if (protocol == &Protocol::ethernetMac) {
-                   auto ethHeader = pkt->peekDataAt<EthernetMacHeader>(offset);
-                   if (isEth2Header(*ethHeader)) {
-                       offset += ethHeader->getChunkLength();
-                       protocol = ProtocolGroup::ethertype.getProtocol(ethHeader->getTypeOrLength());
+               if (protocol->getLayer() == Protocol::LinkLayer) {
+                   if (protocol == &Protocol::ethernetMac) {
+                       auto ethHeader = pkt->peekDataAt<EthernetMacHeader>(offset);
+                       if (isEth2Header(*ethHeader)) {
+                           offset += ethHeader->getChunkLength();
+                           protocol = ProtocolGroup::ethertype.getProtocol(ethHeader->getTypeOrLength());
+                       }
                    }
                }
+               if (protocol == &Protocol::ipv4) {
+                   pkt->removeTagIfPresent<NetworkProtocolInd>();
+                   auto ipv4Header = pkt->removeDataAt<Ipv4Header>(offset);
+                   ipv4Header->setDscp(dscp);
+        //           Ipv4::insertCrc(ipv4Header); // recalculate IP header checksum
+                   auto networkProtocolInd = pkt->addTagIfAbsent<NetworkProtocolInd>();
+                   networkProtocolInd->setProtocol(protocol);
+                   networkProtocolInd->setNetworkProtocolHeader(ipv4Header);
+                   pkt->insertDataAt(ipv4Header, offset);
+               }
            }
-           if (protocol == &Protocol::ipv4) {
-               pkt->removeTagIfPresent<NetworkProtocolInd>();
-               auto ipv4Header = pkt->removeDataAt<Ipv4Header>(offset);
-               ipv4Header->setDscp(dscp);
-    //           Ipv4::insertCrc(ipv4Header); // recalculate IP header checksum
-               auto networkProtocolInd = pkt->addTagIfAbsent<NetworkProtocolInd>();
-               networkProtocolInd->setProtocol(protocol);
-               networkProtocolInd->setNetworkProtocolHeader(ipv4Header);
-               pkt->insertDataAt(ipv4Header, offset);
+           // end from dscp
+           ofp_action_output action_output = lookup->getInstructions();
+           if (action_output.port != -1) {
+               outport = action_output.port;
            }
        }
-       // end from dscp
-       ofp_action_output action_output = lookup->getInstructions();
-       uint32_t outport = action_output.port;
-       if(outport == OFPP_CONTROLLER){
-           //send it to the controller
+   }
+
+   if ((*entries.begin()) == NULL || outport == -1) {
+       if(hash !=0){
+           emit(cpPingPacketHash,hash);
+       }
+       // lookup failed
+       flowTableMiss++;
+       EV << "No Entry Found contacting controller" << '\n';
+       handleMissMatchedPacket(pkt);
+       return;
+   }
+
+   if(outport == OFPP_CONTROLLER){
+       //send it to the controller
 //           OFP_Packet_In *packetIn = new OFP_Packet_In("packetIn");
 //           packetIn->getHeader().version = OFP_VERSION;
 //           packetIn->getHeader().type = OFPT_PACKET_IN;
@@ -558,54 +579,45 @@ void OF_Switch::processFrame(Packet *pkt){
 //           packetIn->encapsulate(frame);
 //           packetIn->setBuffer_id(OFP_NO_BUFFER);
 //           socket.send(packetIn);
-           auto packetIn = makeShared<OFP_Packet_In>();
-           packetIn->getHeaderForUpdate().version = OFP_VERSION;
-           packetIn->getHeaderForUpdate().type = OFPT_PACKET_IN;
-           packetIn->setReason(OFPR_ACTION);
-           packetIn->setChunkLength(B(32));
-           packetIn->setBuffer_id(OFP_NO_BUFFER);
-           pkt->insertAtFront(packetIn);
-           socket.send(pkt);
-           if(hash !=0){
-               emit(cpPingPacketHash,hash);
-           }
-       } else if(outport == OFPP_FLOOD) {
-           if(hash !=0){
-               emit(dpPingPacketHash,hash);
-           }
-           EV << "Flood Packet\n" << '\n';
-           unsigned int n = parent->gateSize("gateDataPlane$o");
-           for (unsigned int i=0; i<n; ++i) {
-               if(portVector[i].interfaceId != ifaceId && !(portVector[i].state & OFPPS_BLOCKED)){
-                   auto pktDup = pkt->dup();
-                   pktDup->removeTagIfPresent<DispatchProtocolReq>();
-                   pktDup->addTagIfAbsent<PacketProtocolTag>()->setProtocol(&Protocol::ethernetMac);
-                   pktDup->addTagIfAbsent<InterfaceReq>()->setInterfaceId(portVector[i].interfaceId );
-                   send(pktDup, "dataPlaneOut");
-               }
-           }
-       } else {
-           if(hash !=0){
-               emit(dpPingPacketHash,hash);
-           }
-           //send it out the dataplane on the specific port
-           auto indexPort = getIndexFromId(outport);
-           if (indexPort == -1)
-               throw cRuntimeError("Unknown dataPlaneOut sending port/gate");
-           pkt->addTagIfAbsent<PacketProtocolTag>()->setProtocol(&Protocol::ethernetMac);
-           pkt->addTagIfAbsent<InterfaceReq>()->setInterfaceId(outport);
-           pkt->removeTagIfPresent<DispatchProtocolReq>();
-           send(pkt, "dataPlaneOut");
-           //send(pkt, "dataPlaneOut", indexPort);
-       }
-   } else {
+       auto packetIn = makeShared<OFP_Packet_In>();
+       packetIn->getHeaderForUpdate().version = OFP_VERSION;
+       packetIn->getHeaderForUpdate().type = OFPT_PACKET_IN;
+       packetIn->setReason(OFPR_ACTION);
+       packetIn->setChunkLength(B(32));
+       packetIn->setBuffer_id(OFP_NO_BUFFER);
+       pkt->insertAtFront(packetIn);
+       socket.send(pkt);
        if(hash !=0){
            emit(cpPingPacketHash,hash);
        }
-       // lookup failed
-       flowTableMiss++;
-       EV << "No Entry Found contacting controller" << '\n';
-       handleMissMatchedPacket(pkt);
+   } else if(outport == OFPP_FLOOD) {
+       if(hash !=0){
+           emit(dpPingPacketHash,hash);
+       }
+       EV << "Flood Packet\n" << '\n';
+       unsigned int n = parent->gateSize("gateDataPlane$o");
+       for (unsigned int i=0; i<n; ++i) {
+           if(portVector[i].interfaceId != ifaceId && !(portVector[i].state & OFPPS_BLOCKED)){
+               auto pktDup = pkt->dup();
+               pktDup->removeTagIfPresent<DispatchProtocolReq>();
+               pktDup->addTagIfAbsent<PacketProtocolTag>()->setProtocol(&Protocol::ethernetMac);
+               pktDup->addTagIfAbsent<InterfaceReq>()->setInterfaceId(portVector[i].interfaceId );
+               send(pktDup, "dataPlaneOut");
+           }
+       }
+   } else {
+       if(hash !=0){
+           emit(dpPingPacketHash,hash);
+       }
+       //send it out the dataplane on the specific port
+       auto indexPort = getIndexFromId(outport);
+       if (indexPort == -1)
+           throw cRuntimeError("Unknown dataPlaneOut sending port/gate");
+       pkt->addTagIfAbsent<PacketProtocolTag>()->setProtocol(&Protocol::ethernetMac);
+       pkt->addTagIfAbsent<InterfaceReq>()->setInterfaceId(outport);
+       pkt->removeTagIfPresent<DispatchProtocolReq>();
+       send(pkt, "dataPlaneOut");
+       //send(pkt, "dataPlaneOut", indexPort);
    }
 }
 
