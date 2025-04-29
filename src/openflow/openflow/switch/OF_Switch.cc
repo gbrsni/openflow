@@ -518,7 +518,6 @@ void OF_Switch::processFrame(Packet *pkt){
        //lookup successful
        flowTableHit++;
        EV << "Found entries in flow table." << '\n';
-       // TODO: Iterate entries
        for(auto iter = entries.begin(); iter != entries.end();++iter) {
            EV << "Looking through entry in flow table." << '\n';
            Flow_Table_Entry *lookup = (*iter);
