@@ -11,6 +11,7 @@ import inet.transportlayer.contract.ITcp;
 import inet.common.MessageDispatcher;
 import inet.linklayer.ethernet.contract.IEthernetLayer;
 import inet.protocolelement.contract.IProtocolLayer;
+import inet.common.lifecycle.NodeStatus;
 
 module Open_Flow_Switch
 {
@@ -27,6 +28,8 @@ module Open_Flow_Switch
 
         string networkLayerType = default("Ipv4NetworkLayer");
         string routingTableType = default("Ipv4RoutingTable");
+
+        bool hasStatus = default(false);
 
         //submodules
         bool hasTcp = default(firstAvailableOrEmpty("Tcp", "TcpLwip", "TcpNsc") != "");
@@ -52,13 +55,17 @@ module Open_Flow_Switch
         inout gateDataPlane[] @labels(DataPlane);
 
     submodules:
-        
-        
+
+
         OF_Switch: OF_Switch {
             @display("p=442,43");
 
         }
-        
+
+        status: NodeStatus if hasStatus {
+            @display("p=36,358;is=s");
+        }
+
         eth[sizeof(gateControlPlane)]: EthernetInterface {
             parameters:
                 @display("p=313,664,row,90;q=txQueue");
@@ -69,7 +76,7 @@ module Open_Flow_Switch
                 mac.promiscuous = true;
                 @display("p=736,598,c,70");
         }
-        
+
         at: MessageDispatcher {
             parameters:
                 @display("p=400,101;b=580,5,,,,1");
@@ -122,9 +129,9 @@ module Open_Flow_Switch
             parameters:
                 @display("p=352,249;q=queue");
         }
-        
 
-        
+
+
     connections allowunconnected:
 
         at.out++ --> tn.in++;
@@ -163,10 +170,10 @@ module Open_Flow_Switch
 
         at.out++ --> OF_Switch.controlPlaneIn;
         OF_Switch.controlPlaneOut --> at.in++;
-        
+
         OF_Switch.dataPlaneOut --> ethDisp.in++;
         OF_Switch.dataPlaneIn <-- ethDisp.out++;
-        
+
         bl.out++ --> ethernet.upperLayerIn if exists(ethernet);
         ethernet.upperLayerOut --> bl.in++ if exists(ethernet);
 
