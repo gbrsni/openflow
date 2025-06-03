@@ -294,7 +294,8 @@ bool AbstractControllerApp::chekIcmpEchoRequest(Packet *pkt, int &seqNumber, int
     PacketDissector::PduTreeBuilder pduTreeBuilder;
     auto packetProtocolTag = pkt->findTag<PacketProtocolTag>();
     auto protocol = packetProtocolTag != nullptr ? packetProtocolTag->getProtocol() : nullptr;
-    PacketDissector packetDissector(ProtocolDissectorRegistry::globalRegistry, pduTreeBuilder);
+//    PacketDissector packetDissector(ProtocolDissectorRegistry::globalRegistry, pduTreeBuilder);
+    PacketDissector packetDissector(ProtocolDissectorRegistry::getInstance(), pduTreeBuilder);
     packetDissector.dissectPacket(pkt, protocol);
 
     auto& protocolDataUnit = pduTreeBuilder.getTopLevelPdu();

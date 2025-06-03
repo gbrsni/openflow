@@ -407,7 +407,8 @@ static bool chekIcmpEchoRequest(Packet *pkt, int &seqNumber, int &identifier) {
     PacketDissector::PduTreeBuilder pduTreeBuilder;
     auto packetProtocolTag = pkt->findTag<PacketProtocolTag>();
     auto protocol = packetProtocolTag != nullptr ? packetProtocolTag->getProtocol() : nullptr;
-    PacketDissector packetDissector(ProtocolDissectorRegistry::globalRegistry, pduTreeBuilder);
+//    PacketDissector packetDissector(ProtocolDissectorRegistry::globalRegistry, pduTreeBuilder);
+    PacketDissector packetDissector(ProtocolDissectorRegistry::getInstance(), pduTreeBuilder);
     packetDissector.dissectPacket(pkt, protocol);
 
     auto& protocolDataUnit = pduTreeBuilder.getTopLevelPdu();
@@ -534,7 +535,7 @@ void OF_Switch::processFrame(Packet *pkt){
                        auto ethHeader = pkt->peekDataAt<EthernetMacHeader>(offset);
                        if (isEth2Header(*ethHeader)) {
                            offset += ethHeader->getChunkLength();
-                           protocol = ProtocolGroup::ethertype.getProtocol(ethHeader->getTypeOrLength());
+                           protocol = ProtocolGroup::getEthertypeProtocolGroup()->getProtocol(ethHeader->getTypeOrLength());
                        }
                    }
                }
