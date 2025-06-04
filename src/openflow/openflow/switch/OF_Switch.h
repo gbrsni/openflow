@@ -24,6 +24,7 @@ public:
     OF_Switch();
     ~OF_Switch();
     void disablePorts(std::vector<int> ports);
+    void enablePorts();
     virtual void finish() override;
     virtual int getIndexFromId(int id);
 

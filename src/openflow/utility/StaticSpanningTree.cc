@@ -17,6 +17,24 @@ void StaticSpanningTree::initialize(int stage) {
        if (topo_spanntree.getNumNodes() == 0)
            throw cRuntimeError("Impossible to compute the Spanning tree, 0 nodes found");
 
+
+       // enable ports for all nodes
+       for (int x = 0; x < topo_spanntree.getNumNodes(); x++) {
+           // Find open_flow_swich module within submodules
+           if (topo_spanntree.getNode(x)->getModule()->findSubmodule("open_flow_switch")>=0) {
+               cModule *mod = topo_spanntree.getNode(x)->getModule()->getSubmodule("open_flow_switch")->getSubmodule("OF_Switch");
+               OF_Switch *proc = check_and_cast<OF_Switch *>(mod);
+//               proc->enablePorts(nodeInfo[x].ports);
+               proc->enablePorts();
+           }else if (topo_spanntree.getNode(x)->getModule()->findSubmodule("OF_Switch")>=0) {
+               cModule *mod = topo_spanntree.getNode(x)->getModule()->getSubmodule("OF_Switch");
+               OF_Switch *proc = check_and_cast<OF_Switch *>(mod);
+//               proc->enablePorts(nodeInfo[x].ports);
+               proc->enablePorts();
+           }
+       }
+
+
         nodeInfo.resize(topo_spanntree.getNumNodes());
         for (int i = 0; i < topo_spanntree.getNumNodes(); i++) {
             nodeInfo[i].moduleID = topo_spanntree.getNode(i)->getModuleId();

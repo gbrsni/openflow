@@ -786,6 +786,41 @@ void OF_Switch::executePacketOutAction(const ofp_action_header *action, Packet *
     //delete pktFrame;
 }
 
+// invoked by Spanning Tree module to enable all ports for broadcast packets
+void OF_Switch::enablePorts() {
+    EV << "enablePorts method at " << parent->getFullPath() << '\n';
+
+    for (unsigned int i = 0; i<portVector.size(); ++i){
+//        portVector[i].state |= OFPPS_BLOCKED;
+        portVector[i].state = 0;
+    }
+
+    for(unsigned int i=0;i<portVector.size();++i){
+        EV << "Port: " << i << " Value: " << portVector[i].state << '\n';
+    }
+
+    // TODO: Fix this do un higlight disabled ports!
+//    if(par("highlightActivePorts")){
+//        // Highlight links that belong to spanning tree
+//        for (unsigned int i = 0; i < portVector.size(); ++i){
+//            if (!(portVector[i].state & OFPPS_BLOCKED)){
+//                cGate *gateOut = parent->gate("gateDataPlane$o", i);
+//                do {
+//                    cDisplayString& connDispStrOut = gateOut->getDisplayString();
+//                    connDispStrOut.parse("ls=green,3,dashed");
+//                    gateOut = gateOut->getNextGate();
+//                } while (gateOut != nullptr && !gateOut->getOwnerModule()->getModuleType()->isSimple());
+//
+//                cGate *gateIn = parent->gate("gateDataPlane$i", i);
+//                do {
+//                    cDisplayString& connDispStrIn = gateIn->getDisplayString();
+//                    connDispStrIn.parse("ls=green,3,dashed");
+//                    gateIn = gateIn->getPreviousGate();
+//                } while (gateIn != nullptr && !gateIn->getOwnerModule()->getModuleType()->isSimple());
+//            }
+//        }
+//    }
+}
 
 // invoked by Spanning Tree module disable ports for broadcast packets
 void OF_Switch::disablePorts(vector<int> ports) {
