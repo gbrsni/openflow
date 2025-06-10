@@ -39,6 +39,9 @@ protected:
     typedef std::vector<NodeInfo> NodeInfoVector;
     cTopology topo_spanntree;
     NodeInfoVector nodeInfo;
+
+private:
+    void log(std::string msg);
 };
 
 #endif /* OPENFLOW_CONTROLLERAPPS_FLOWTABLEPRELOADER_H_ */

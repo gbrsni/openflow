@@ -37,7 +37,7 @@ void FiDeController::initialize(int stage){
     }
 
     // FiDe stuff
-    const char *NodeType = "openflow.openflow.switch.Open_Flow_Switch";
+    const char* NodeType = "openflow.openflow.switch.Open_Flow_Switch";
     int startNode = 0;
 
     std::vector<std::string> nodeTypes = cStringTokenizer(NodeType).asVector();
@@ -48,6 +48,9 @@ void FiDeController::initialize(int stage){
     for (int i = 0; i < topo_spanntree.getNumNodes(); i++) {
         nodeInfo[i].moduleID = topo_spanntree.getNode(i)->getModuleId();
         nodeInfo[i].treeNeighbors.resize(topo_spanntree.getNumNodes(),0);
+
+        auto modulePath = topo_spanntree.getNode(i)->getModule()->getFullPath();
+        log("Module Path: " + modulePath);
     }
 }
 
@@ -264,8 +267,12 @@ void FiDeController::receiveSignal(cComponent *src, simsignal_t id, cObject *obj
         if (pkt != nullptr) {
             auto chunk = pkt->peekAtFront<Chunk>();
             auto packet_in_msg = dynamicPtrCast<const OFP_Features_Reply>(chunk);
-            if (packet_in_msg != nullptr)
+            if (packet_in_msg != nullptr) {
+                auto datapath_id = packet_in_msg->getDatapath_id();
+                std::string s(datapath_id); // Ew
+                log("Datapath: " + s);
                 sendFlowTables(pkt);
+            }
         }
     }
 //    if(id == PacketInSignalId){
@@ -285,4 +292,8 @@ void FiDeController::sendFlowTables(Packet* pkt){
     auto socket = controller->findSocketFor(pkt);
 
     sendFlowModMessage(OFPFC_ADD, match, outport, socket, idleTimeout, hardTimeout, dscp);
+}
+
+void FiDeController::log(std::string msg) {
+    EV << "FiDeController " << msg << "\n";
 }
