@@ -25,6 +25,20 @@ protected:
     void readFlowtableConfiguration();
 
     int dscp;
+
+    // Tree stuff
+    struct NodeInfo {
+        NodeInfo() {isInTree=false;isProcessed=false;}
+        bool isInTree;
+        bool isProcessed;
+        int moduleID;
+        std::vector<int> ports;
+        std::vector<int> treeNeighbors;
+    };
+
+    typedef std::vector<NodeInfo> NodeInfoVector;
+    cTopology topo_spanntree;
+    NodeInfoVector nodeInfo;
 };
 
 #endif /* OPENFLOW_CONTROLLERAPPS_FLOWTABLEPRELOADER_H_ */

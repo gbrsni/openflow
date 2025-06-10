@@ -40,12 +40,15 @@ void FiDeController::initialize(int stage){
     const char *NodeType = "openflow.openflow.switch.Open_Flow_Switch";
     int startNode = 0;
 
-    cTopology topo_spanntree;
-
     std::vector<std::string> nodeTypes = cStringTokenizer(NodeType).asVector();
     topo_spanntree.extractByNedTypeName(nodeTypes);
     EV << "FiDeController cTopology found " << topo_spanntree.getNumNodes() << "\n";
 
+    nodeInfo.resize(topo_spanntree.getNumNodes());
+    for (int i = 0; i < topo_spanntree.getNumNodes(); i++) {
+        nodeInfo[i].moduleID = topo_spanntree.getNode(i)->getModuleId();
+        nodeInfo[i].treeNeighbors.resize(topo_spanntree.getNumNodes(),0);
+    }
 }
 
 void FiDeController::readFlowtableConfiguration() {
