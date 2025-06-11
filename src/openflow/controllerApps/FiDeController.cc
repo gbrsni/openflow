@@ -58,35 +58,37 @@ void FiDeController::initialize(int stage){
 //        auto submoduleVector = module->getSubmoduleVectorNames();
 //        log(submoduleVector.at(0));
 
+
         auto submodule = module->getSubmodule("eth", 0);
         if (submodule != nullptr) {
             auto submodulePath = submodule->getFullPath();
-            log("SubModule Path: " + submodulePath);
+//            log("SubModule Path: " + submodulePath);
 
 //            auto addressPar = submodule->("Address");
 
-            auto numpars = submodule->getNumParams();
-            for (int i = 0; i < numpars; i++) {
-                auto parname = submodule->par(i).getName();
-                std::string parstring(parname);
-                log("Par name: " + (parstring));
+//            auto numpars = submodule->getNumParams();
+//            for (int i = 0; i < numpars; i++) {
+//                auto parname = submodule->par(i).getName();
+//                std::string parstring(parname);
+//                log("Par name: " + (parstring));
+//            }
+
+
+            std::string addressString = submodule->par("address").getValue().str(); // This adds quotation marks to the string! DFQ
+            addressString = addressString.substr(1, addressString.length()-2); // This slicing is inclusive for some reason
+            log("Address string: " + addressString);
+
+            MacAddress moduleAddress;
+            try {
+                auto cstr = addressString.c_str();
+                moduleAddress = MacAddress(cstr);
+                log("Good MAC address");
+                log("MAC address: " + moduleAddress.str());
+            } catch (std::exception& e) {
+                log("Bad MAC address");
             }
 
-            std::string addressString = submodule->par("address").getValue().str();
-            log("Address: " + addressString);
 
-//            auto props = submodule->getProperties();
-//            auto propnum = props->getNumProperties();
-//            log("Num props: " + std::to_string(propnum));
-//            for (int i = 0; i < propnum; i ++) {
-//                auto addressprop = props->get(i);
-//                if (addressprop != nullptr) {
-//                    std::string someprop(addressprop->getFullName());
-//                    log("Address: " + someprop);
-//                } else {
-//                    log("No prop found");
-//                }
-//            }
 
         } else {
             log("No submodule found");
@@ -308,8 +310,18 @@ void FiDeController::receiveSignal(cComponent *src, simsignal_t id, cObject *obj
             auto chunk = pkt->peekAtFront<Chunk>();
             auto packet_in_msg = dynamicPtrCast<const OFP_Features_Reply>(chunk);
             if (packet_in_msg != nullptr) {
+
                 std::string datapath_id(packet_in_msg->getDatapath_id()); // The interface's MAC Address!!! Maybe useful
                 log("Datapath: " + datapath_id);
+                MacAddress datapathMAC;
+                try {
+                    datapathMAC = MacAddress(datapath_id.c_str());
+                    log("Datapath MAC address: " + datapathMAC.str());
+                } catch (std::exception& e) {
+                    log("Bad MAC address");
+                }
+
+
                 sendFlowTables(pkt);
             }
         }
