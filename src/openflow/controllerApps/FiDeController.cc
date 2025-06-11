@@ -17,6 +17,9 @@
 #include "openflow/controllerApps/FiDeController.h"
 #include "openflow/messages/OFP_Features_Reply_m.h"
 
+#include <Topology.h>
+#include <tools.h>
+
 Define_Module(FiDeController);
 
 
@@ -37,8 +40,15 @@ void FiDeController::initialize(int stage){
     }
 
     // FiDe stuff
+//    // TE
+    const std::vector<std::string> typenames = {"inet.node.inet.StandardHost", "openflow.openflow.switch.Open_Flow_Switch"};
+    TrafficEngineering::Topology topo = TrafficEngineering::makeTopologyFromCurrentNetwork(typenames);
+    log("TE Topology made");
+
+    // Mine
     const char* NodeType = "openflow.openflow.switch.Open_Flow_Switch";
     int startNode = 0;
+
 
     std::vector<std::string> nodeTypes = cStringTokenizer(NodeType).asVector();
     topo_spanntree.extractByNedTypeName(nodeTypes);
