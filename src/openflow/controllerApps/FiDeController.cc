@@ -49,8 +49,48 @@ void FiDeController::initialize(int stage){
         nodeInfo[i].moduleID = topo_spanntree.getNode(i)->getModuleId();
         nodeInfo[i].treeNeighbors.resize(topo_spanntree.getNumNodes(),0);
 
-        auto modulePath = topo_spanntree.getNode(i)->getModule()->getFullPath();
+        auto module = topo_spanntree.getNode(i)->getModule();
+        auto modulePath = module->getFullPath();
         log("Module Path: " + modulePath);
+
+//        int submoduleID = module->findSubmodule("eth[0]");
+//        log("Submodule ID: " + submoduleID);
+//        auto submoduleVector = module->getSubmoduleVectorNames();
+//        log(submoduleVector.at(0));
+
+        auto submodule = module->getSubmodule("eth", 0);
+        if (submodule != nullptr) {
+            auto submodulePath = submodule->getFullPath();
+            log("SubModule Path: " + submodulePath);
+
+//            auto addressPar = submodule->("Address");
+
+            auto numpars = submodule->getNumParams();
+            for (int i = 0; i < numpars; i++) {
+                auto parname = submodule->par(i).getName();
+                std::string parstring(parname);
+                log("Par name: " + (parstring));
+            }
+
+            std::string addressString = submodule->par("address").getValue().str();
+            log("Address: " + addressString);
+
+//            auto props = submodule->getProperties();
+//            auto propnum = props->getNumProperties();
+//            log("Num props: " + std::to_string(propnum));
+//            for (int i = 0; i < propnum; i ++) {
+//                auto addressprop = props->get(i);
+//                if (addressprop != nullptr) {
+//                    std::string someprop(addressprop->getFullName());
+//                    log("Address: " + someprop);
+//                } else {
+//                    log("No prop found");
+//                }
+//            }
+
+        } else {
+            log("No submodule found");
+        }
     }
 }
 
@@ -268,9 +308,8 @@ void FiDeController::receiveSignal(cComponent *src, simsignal_t id, cObject *obj
             auto chunk = pkt->peekAtFront<Chunk>();
             auto packet_in_msg = dynamicPtrCast<const OFP_Features_Reply>(chunk);
             if (packet_in_msg != nullptr) {
-                auto datapath_id = packet_in_msg->getDatapath_id();
-                std::string s(datapath_id); // Ew
-                log("Datapath: " + s);
+                std::string datapath_id(packet_in_msg->getDatapath_id()); // The interface's MAC Address!!! Maybe useful
+                log("Datapath: " + datapath_id);
                 sendFlowTables(pkt);
             }
         }
