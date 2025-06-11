@@ -58,7 +58,7 @@ void FiDeController::initialize(int stage){
 //        auto submoduleVector = module->getSubmoduleVectorNames();
 //        log(submoduleVector.at(0));
 
-
+        // Get eth[0], that is the control plane interface of the Open_Flow_Switch
         auto submodule = module->getSubmodule("eth", 0);
         if (submodule != nullptr) {
             auto submodulePath = submodule->getFullPath();
@@ -73,8 +73,9 @@ void FiDeController::initialize(int stage){
 //                log("Par name: " + (parstring));
 //            }
 
-
+            // Get interface's MAC address. This is the same address we'll find in the datapath id for openflow messages
             std::string addressString = submodule->par("address").getValue().str(); // This adds quotation marks to the string! DFQ
+            // Remove trailing and leading "
             addressString = addressString.substr(1, addressString.length()-2); // This slicing is inclusive for some reason
             log("Address string: " + addressString);
 
