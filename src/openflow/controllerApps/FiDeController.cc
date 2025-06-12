@@ -365,6 +365,7 @@ void FiDeController::receiveSignal(cComponent *src, simsignal_t id, cObject *obj
 
                 std::vector<int> ports = getPortsByMac(datapathMAC);
 
+                log("Ports:");
                 for (auto i = ports.begin(); i < ports.end(); i++) {
                     log("port: " + std::to_string(*i));
                 }
@@ -443,6 +444,8 @@ std::string FiDeController::getModuleMameByMac(MacAddress mac) {
 
 std::vector<int> FiDeController::getPortsByMac(MacAddress mac) {
     std::vector<int> res;
+    std::string modulePath = getModuleMameByMac(mac);
+    log("Module path: " + modulePath);
     return res;
 }
 
