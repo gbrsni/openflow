@@ -6,6 +6,8 @@
 #include "openflow/controllerApps/AbstractControllerApp.h"
 #include "openflow/openflow/switch/Flow_Table.h"
 
+#include <Link.h>
+
 class FiDeController: public AbstractControllerApp {
 public:
     FiDeController();
@@ -44,6 +46,8 @@ private:
     void log(std::string msg, bool warn=false);
     std::string getModuleMameByMac(MacAddress mac);
     std::vector<int> getPortsByMac(MacAddress mac);
+
+    std::vector<TrafficEngineering::Link> links;
 };
 
 #endif /* OPENFLOW_CONTROLLERAPPS_FLOWTABLEPRELOADER_H_ */

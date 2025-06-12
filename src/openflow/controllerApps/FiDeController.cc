@@ -66,7 +66,7 @@ void FiDeController::initialize(int stage){
     TrafficEngineering::Tunnel tunnel = TrafficEngineering::optimization(topology, tunnels, request);
 
     log("Tunnel links: ");
-    std::vector<TrafficEngineering::Link> links = tunnel.getAllLinks();
+    links = tunnel.getAllLinks();
     for (auto i = links.begin(); i < links.end(); i++) {
         log("localNodeName: " + i->localNodeName);
 //        log("localNodeName: " + i->remoteNodeName);
@@ -444,8 +444,29 @@ std::string FiDeController::getModuleMameByMac(MacAddress mac) {
 
 std::vector<int> FiDeController::getPortsByMac(MacAddress mac) {
     std::vector<int> res;
+
     std::string modulePath = getModuleMameByMac(mac);
     log("Module path: " + modulePath);
+
+
+    // TODO: Make this into a map instead of iterating every time
+//    log("Tunnel links: ");
+//    std::vector<TrafficEngineering::Link> allLinks = tunnel.getAllLinks();
+    std::vector<std::string> interfaceNames;
+//    for (auto i = allLinks.begin(); i < allLinks.end(); i++) {
+////        log("localNodeName: " + i->localNodeName);
+////        log("localInterfaceName: " + i->localInterfaceName);
+//        if (modulePath.compare(i->localInterfaceName) == 0) {
+//            interfaceNames.push_back(i->localInterfaceName);
+//        }
+//    }
+
+    log("FiDe interfaces:");
+    for (auto i = interfaceNames.begin(); i < interfaceNames.end(); i++) {
+        log("Interface: " + *i);
+    }
+
+
     return res;
 }
 
