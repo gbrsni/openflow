@@ -456,7 +456,7 @@ std::vector<int> FiDeController::getPortsByMac(MacAddress mac) {
     for (auto i = links.begin(); i < links.end(); i++) {
         log("localNodeName: " + i->localNodeName);
         log("localInterfaceName: " + i->localInterfaceName);
-        if (modulePath.compare(i->localInterfaceName) == 0) {
+        if (modulePath.compare(i->localNodeName) == 0) {
             log("Found a match");
             interfaceNames.push_back(i->localInterfaceName);
         }
