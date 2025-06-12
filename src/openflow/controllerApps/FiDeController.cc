@@ -117,7 +117,7 @@ void FiDeController::initialize(int stage){
             // Get interface's MAC address. This is the same address we'll find in the datapath id for openflow messages
             std::string addressString = submodule->par("address").getValue().str(); // This adds quotation marks to the string! DFQ
             // Remove trailing and leading "
-            addressString = addressString.substr(1, addressString.length()-2); // This slicing is inclusive for some reason
+            addressString = addressString.substr(1, addressString.length()-2);
             log("Address string: " + addressString);
 
             MacAddress moduleAddress;
@@ -414,7 +414,7 @@ std::string FiDeController::getModuleMameByMac(MacAddress mac) {
             // Get interface's MAC address. This is the same address we'll find in the datapath id for openflow messages
             std::string addressString = submodule->par("address").getValue().str(); // This adds quotation marks to the string! DFQ
             // Remove trailing and leading "
-            addressString = addressString.substr(1, addressString.length()-2); // This slicing is inclusive for some reason
+            addressString = addressString.substr(1, addressString.length()-2);
 //            log("Address string: " + addressString);
 
             MacAddress moduleAddress;
@@ -465,6 +465,9 @@ std::vector<int> FiDeController::getPortsByMac(MacAddress mac) {
     log("FiDe interfaces:");
     for (auto i = interfaceNames.begin(); i < interfaceNames.end(); i++) {
         log("Interface: " + *i);
+        std::string portIDString = i->substr(i->length()-1, 1);
+        log("portIDString: " + portIDString);
+        res.push_back(std::stoi(portIDString) + 101); // Ports are numbered from 101
     }
 
 
