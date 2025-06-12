@@ -42,6 +42,7 @@ protected:
 
 private:
     void log(std::string msg, bool warn=false);
+    std::vector<int> getPortsByMac(MacAddress mac);
 };
 
 #endif /* OPENFLOW_CONTROLLERAPPS_FLOWTABLEPRELOADER_H_ */
