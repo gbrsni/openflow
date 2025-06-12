@@ -138,6 +138,7 @@ void FiDeController::initialize(int stage){
     }
 }
 
+// TODO: Remove
 void FiDeController::readFlowtableConfiguration() {
 
     using namespace xmlutils;
@@ -370,8 +371,7 @@ void FiDeController::receiveSignal(cComponent *src, simsignal_t id, cObject *obj
                     log("port: " + std::to_string(*i));
                 }
 
-
-                sendFlowTables(pkt);
+                sendFlowTables(pkt, ports);
             }
         }
     }
@@ -387,11 +387,20 @@ void FiDeController::receiveSignal(cComponent *src, simsignal_t id, cObject *obj
 //    }
 }
 
-void FiDeController::sendFlowTables(Packet* pkt){
+void FiDeController::sendFlowTables(Packet* pkt, std::vector<uint32_t> outports){
+    log("sendFlowTables", false, true);
+
+    match = oxm_basic_match();
+    match.OFB_IPV4_DST = Ipv4Address("224.0.1.3"); // TODO: Make into a parameter
+
+    match.wildcards= 0;
+    match.wildcards |= OFPFW_ALL;
+    match.wildcards ^=  OFPFW_NW_DST_ALL; // Wildcard all but IPV4 destination
 
     auto socket = controller->findSocketFor(pkt);
 
-    sendFlowModMessage(OFPFC_ADD, match, outport, socket, idleTimeout, hardTimeout, dscp);
+    // TODO: Allow flow entries to have array of outports
+    sendFlowModMessage(OFPFC_ADD, match, outports, socket, idleTimeout, hardTimeout);
 }
 
 std::string FiDeController::getModuleMameByMac(MacAddress mac) {

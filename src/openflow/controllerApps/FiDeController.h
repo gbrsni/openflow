@@ -16,11 +16,10 @@ public:
 protected:
     void receiveSignal(cComponent *src, simsignal_t id, cObject *obj, cObject *details) override;
     void initialize(int stage) override;
-    void sendFlowTables(Packet* packet_in_msg);
+    void sendFlowTables(Packet* packet_in_msg, std::vector<uint32_t> outports);
 
     cXMLElement *configuration = nullptr;
     bool flowConfigRead = false;
-    uint32_t outport;
     int idleTimeout;
     int hardTimeout;
     oxm_basic_match match;
