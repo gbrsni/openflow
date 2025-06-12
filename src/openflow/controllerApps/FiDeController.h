@@ -43,7 +43,7 @@ protected:
     NodeInfoVector nodeInfo;
 
 private:
-    void log(std::string msg, bool warn=false);
+    void log(std::string msg, bool warn=false, bool debug=false);
     std::string getModuleMameByMac(MacAddress mac);
     std::vector<int> getPortsByMac(MacAddress mac);
 

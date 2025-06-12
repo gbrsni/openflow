@@ -455,7 +455,10 @@ std::vector<int> FiDeController::getPortsByMac(MacAddress mac) {
     std::vector<std::string> interfaceNames;
     for (auto i = links.begin(); i < links.end(); i++) {
         log("localNodeName: " + i->localNodeName);
+        log("remoteNodeName: " + i->remoteNodeName);
         log("localInterfaceName: " + i->localInterfaceName);
+        log("remoteInterfaceName: " + i->remoteInterfaceName);
+        EV << "\n";
         if (modulePath.compare(i->localNodeName) == 0) {
             log("Found a match");
             interfaceNames.push_back(i->localInterfaceName);
@@ -467,16 +470,20 @@ std::vector<int> FiDeController::getPortsByMac(MacAddress mac) {
         log("Interface: " + *i);
         std::string portIDString = i->substr(i->length()-1, 1);
         log("portIDString: " + portIDString);
-        res.push_back(std::stoi(portIDString) + 101); // Ports are numbered from 101
+        int portID = std::stoi(portIDString) + 101;  // Ports are numbered from 101
+        log("portID: " + std::to_string(portID) + " for " + modulePath);
+        res.push_back(portID);
     }
 
 
     return res;
 }
 
-void FiDeController::log(std::string msg, bool warn) {
+void FiDeController::log(std::string msg, bool warn, bool debug) {
     if (warn) {
         EV_WARN << "FiDeController " << msg << "\n";
+    } else if (debug) {
+        EV_DEBUG << "FiDeController " << msg << "\n";
     } else {
         EV << "FiDeController " << msg << "\n";
     }
