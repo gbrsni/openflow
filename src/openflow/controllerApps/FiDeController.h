@@ -19,11 +19,8 @@ protected:
     void sendFlowTables(Packet* packet_in_msg, std::vector<uint32_t> outports);
 
     cXMLElement *configuration = nullptr;
-    bool flowConfigRead = false;
-    int idleTimeout;
-    int hardTimeout;
-    oxm_basic_match match;
-    void readFlowtableConfiguration();
+    int idleTimeout = -1;
+    int hardTimeout = -1;
 
     int dscp;
 
@@ -44,7 +41,7 @@ protected:
 private:
     void log(std::string msg, bool warn=false, bool debug=false);
     std::string getModuleMameByMac(MacAddress mac);
-    std::vector<int> getPortsByMac(MacAddress mac);
+    std::vector<uint32_t> getPortsByMac(MacAddress mac);
 
     std::vector<TrafficEngineering::Link> links;
 };

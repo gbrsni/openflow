@@ -37,12 +37,6 @@ FiDeController::~FiDeController() {
 void FiDeController::initialize(int stage){
     AbstractControllerApp::initialize(stage);
 
-    if (!flowConfigRead) {
-        configuration = par("config");
-        readFlowtableConfiguration();
-        flowConfigRead = true;
-    }
-
     // FiDe stuff
     // TE
     const std::vector<std::string> typenames = {"inet.node.inet.StandardHost", "openflow.openflow.switch.Open_Flow_Switch"};
@@ -138,209 +132,6 @@ void FiDeController::initialize(int stage){
     }
 }
 
-// TODO: Remove
-void FiDeController::readFlowtableConfiguration() {
-
-    using namespace xmlutils;
-
-    match = oxm_basic_match();
-
-    cXMLElementList entryElements = configuration->getChildrenByTagName("entry");
-
-    for (auto& entryElement : entryElements) {
-        const char* action_outputAttr = entryElement->getAttribute("action_output"); // I don't like mixing cases like this but trying to follow multiple standards led to this...
-        const char* idleTimeoutAttr = entryElement->getAttribute("idleTimeout");
-        const char* hardTimeoutAttr = entryElement->getAttribute("hardTimeout");
-
-        try {
-            outport = static_cast<uint32_t>(std::stoul(action_outputAttr));
-            idleTimeout = static_cast<int>(std::stoul(idleTimeoutAttr));
-            hardTimeout = static_cast<int>(std::stoul(hardTimeoutAttr));
-        } catch (std::exception& e) {
-            throw cRuntimeError("Error in XML <entry> element at %s: %s", entryElement->getSourceLocation(), e.what());
-        }
-
-        const char* dscpAttr = entryElement->getAttribute("dscp");
-
-        if (dscpAttr == nullptr) {
-            dscp = 0;
-        } else {
-            try {
-                dscp = static_cast<int>(std::stoul(dscpAttr));
-            } catch (std::exception& e) {
-                // Use default value
-                dscp = 0;
-            }
-        }
-
-//        cXMLElementList matchElements = configuration->getChildrenByTagName("entry/match");
-//
-//        for (auto& matchElement : matchElements) {
-//            local_match = oxm_basic_match();
-
-            const char* in_portAttr = entryElement->getAttribute("in_port");
-
-            const char* eth_dstAttr = entryElement->getAttribute("eth_dst");
-            const char* eth_srcAttr = entryElement->getAttribute("eth_src");
-            const char* eth_typeAttr = entryElement->getAttribute("eth_type");
-
-            const char* ipv4_dstAttr = entryElement->getAttribute("ipv4_dst");
-
-            const char* arp_opAttr = entryElement->getAttribute("arp_op");
-            const char* arp_spaAttr = entryElement->getAttribute("arp_spa");
-            const char* arp_tpaAttr = entryElement->getAttribute("arp_tpa");
-            const char* arp_shaAttr = entryElement->getAttribute("arp_sha");
-            const char* arp_thaAttr = entryElement->getAttribute("arp_tha");
-
-            const char* wildcardsAttr = entryElement->getAttribute("wildcards");
-
-            int* in_port = (int*)malloc(sizeof(int));
-
-            MacAddress* eth_dst;
-            MacAddress* eth_src;
-            int* eth_type = (int*)malloc(sizeof(int));
-
-            Ipv4Address* ipv4_dst;
-
-            int* arp_op = (int*)malloc(sizeof(int));
-            Ipv4Address* arp_spa;
-            Ipv4Address* arp_tpa;
-            MacAddress* arp_sha;
-            MacAddress* arp_tha;
-
-            uint32_t* wildcards = (uint32_t*)malloc(sizeof(uint32_t));;
-
-            try {
-                *in_port = static_cast<int>(std::stoul(in_portAttr));
-            } catch (std::exception& e) {
-//                throw cRuntimeError("Error in XML <entry> in_port element at %s: %s", entryElement->getSourceLocation(), e.what());
-                in_port = nullptr;
-            }
-
-            MacAddress o_eth_dst;
-            try {
-                o_eth_dst = MacAddress(eth_dstAttr);
-                eth_dst = &o_eth_dst;
-            } catch (std::exception& e) {
-//                throw cRuntimeError("Error in XML <entry> eth_dst element at %s: %s", entryElement->getSourceLocation(), e.what());
-                eth_dst = nullptr;
-            }
-
-            MacAddress o_eth_src;
-            try {
-                o_eth_src = MacAddress(eth_srcAttr);
-                eth_src = &o_eth_src;
-            } catch (std::exception& e) {
-//                throw cRuntimeError("Error in XML <entry> eth_src element at %s: %s", entryElement->getSourceLocation(), e.what());
-                eth_src = nullptr;
-            }
-            try {
-                *eth_type = static_cast<int>(std::stoul(eth_typeAttr));
-            } catch (std::exception& e) {
-//                throw cRuntimeError("Error in XML <entry> eth_type element at %s: %s", entryElement->getSourceLocation(), e.what());
-                eth_type = nullptr;
-            }
-
-            Ipv4Address o_ipv4_dst;
-            try {
-                o_ipv4_dst = Ipv4Address(ipv4_dstAttr);
-                ipv4_dst = &o_ipv4_dst;
-            } catch (std::exception& e) {
-//                throw cRuntimeError("Error in XML <entry> ipv4_dst element at %s: %s", entryElement->getSourceLocation(), e.what());
-                ipv4_dst = nullptr;
-            }
-
-            try {
-                *arp_op = static_cast<int>(std::stoul(arp_opAttr));
-            } catch (std::exception& e) {
-//                throw cRuntimeError("Error in XML <entry> arp_op element at %s: %s", entryElement->getSourceLocation(), e.what());
-                arp_op = nullptr;
-            }
-
-            Ipv4Address o_arp_spa;
-            try {
-                o_arp_spa = Ipv4Address(arp_spaAttr);
-                arp_spa = &o_arp_spa;
-            } catch (std::exception& e) {
-//                throw cRuntimeError("Error in XML <entry> arp_spa element at %s: %s", entryElement->getSourceLocation(), e.what());
-                arp_spa = nullptr;
-            }
-
-            Ipv4Address o_arp_tpa;
-            try {
-                o_arp_tpa = Ipv4Address(arp_tpaAttr);
-                arp_tpa = &o_arp_tpa;
-            } catch (std::exception& e) {
-//                throw cRuntimeError("Error in XML <entry> arp_tpa element at %s: %s", entryElement->getSourceLocation(), e.what());
-                arp_tpa = nullptr;
-            }
-
-            MacAddress o_arp_sha;
-            try {
-                o_arp_sha = MacAddress(arp_shaAttr);
-                arp_sha = &o_arp_sha;
-            } catch (std::exception& e) {
-//                throw cRuntimeError("Error in XML <entry> arp_sha element at %s: %s", entryElement->getSourceLocation(), e.what());
-                arp_sha = nullptr;
-            }
-
-            MacAddress o_arp_tha;
-            try {
-                o_arp_tha = MacAddress(arp_thaAttr);
-                arp_tha = &o_arp_tha;
-            } catch (std::exception& e) {
-//                throw cRuntimeError("Error in XML <entry> arp_tha element at %s: %s", entryElement->getSourceLocation(), e.what());
-                arp_tha = nullptr;
-            }
-
-            try {
-                *wildcards = static_cast<uint32_t>(std::stoul(wildcardsAttr));
-            } catch (std::exception& e) {
-//                throw cRuntimeError("Error in XML <entry> wildcards element at %s: %s", entryElement->getSourceLocation(), e.what());
-                wildcards = nullptr;
-            }
-
-            if (in_port != nullptr) {
-                match.OFB_IN_PORT = *in_port;
-            }
-
-            if (eth_dst != nullptr) {
-                match.OFB_ETH_DST = *eth_dst;
-            }
-            if (eth_src != nullptr) {
-                match.OFB_ETH_SRC = *eth_src;
-            }
-            if (eth_type != nullptr) {
-                match.OFB_ETH_TYPE = *eth_type;
-            }
-
-            if (ipv4_dst != nullptr) {
-                match.OFB_IPV4_DST = *ipv4_dst;
-            }
-
-            if (arp_op != nullptr) {
-                match.OFB_ARP_OP = *arp_op;
-            }
-            if (arp_spa != nullptr) {
-                match.OFB_ARP_SPA = *arp_spa;
-            }
-            if (arp_tpa != nullptr) {
-                match.OFB_ARP_TPA = *arp_tpa;
-            }
-            if (arp_sha != nullptr) {
-                match.OFB_ARP_SHA = *arp_sha;
-            }
-            if (arp_tha != nullptr) {
-                match.OFB_ARP_THA = *arp_tha;
-            }
-
-            if (wildcards != nullptr) {
-                match.wildcards = *wildcards;
-            }
-//        }
-    }
-}
-
 void FiDeController::receiveSignal(cComponent *src, simsignal_t id, cObject *obj, cObject *details) {
     EV << "FiDeController::receiveSignal" << '\n';
 
@@ -364,7 +155,7 @@ void FiDeController::receiveSignal(cComponent *src, simsignal_t id, cObject *obj
                     log("Bad MAC address");
                 }
 
-                std::vector<int> ports = getPortsByMac(datapathMAC);
+                std::vector<uint32_t> ports = getPortsByMac(datapathMAC);
 
                 log("Ports:");
                 for (auto i = ports.begin(); i < ports.end(); i++) {
@@ -390,7 +181,7 @@ void FiDeController::receiveSignal(cComponent *src, simsignal_t id, cObject *obj
 void FiDeController::sendFlowTables(Packet* pkt, std::vector<uint32_t> outports){
     log("sendFlowTables", false, true);
 
-    match = oxm_basic_match();
+    oxm_basic_match match = oxm_basic_match();
     match.OFB_IPV4_DST = Ipv4Address("224.0.1.3"); // TODO: Make into a parameter
 
     match.wildcards= 0;
@@ -400,7 +191,7 @@ void FiDeController::sendFlowTables(Packet* pkt, std::vector<uint32_t> outports)
     auto socket = controller->findSocketFor(pkt);
 
     // TODO: Allow flow entries to have array of outports
-    sendFlowModMessage(OFPFC_ADD, match, outports, socket, idleTimeout, hardTimeout);
+//    sendFlowModMessage(OFPFC_ADD, match, outports, socket, idleTimeout, hardTimeout);
 }
 
 std::string FiDeController::getModuleMameByMac(MacAddress mac) {
@@ -451,9 +242,9 @@ std::string FiDeController::getModuleMameByMac(MacAddress mac) {
     return res;
 }
 
-std::vector<int> FiDeController::getPortsByMac(MacAddress mac) {
+std::vector<uint32_t> FiDeController::getPortsByMac(MacAddress mac) {
     log("getPortsByMac");
-    std::vector<int> res;
+    std::vector<uint32_t> res;
 
     std::string modulePath = getModuleMameByMac(mac);
     log("Module path: " + modulePath);
