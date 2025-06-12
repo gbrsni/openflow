@@ -403,7 +403,7 @@ std::string FiDeController::getModuleMameByMac(MacAddress mac) {
 
         auto module = topo_spanntree.getNode(i)->getModule();
         auto modulePath = module->getFullPath();
-        log("Module Path: " + modulePath);
+//        log("Module Path: " + modulePath);
 
         // Get eth[0], that is the control plane interface of the Open_Flow_Switch
         auto submodule = module->getSubmodule("eth", 0);
@@ -415,16 +415,16 @@ std::string FiDeController::getModuleMameByMac(MacAddress mac) {
             std::string addressString = submodule->par("address").getValue().str(); // This adds quotation marks to the string! DFQ
             // Remove trailing and leading "
             addressString = addressString.substr(1, addressString.length()-2); // This slicing is inclusive for some reason
-            log("Address string: " + addressString);
+//            log("Address string: " + addressString);
 
             MacAddress moduleAddress;
             try {
                 auto cstr = addressString.c_str();
                 moduleAddress = MacAddress(cstr);
-                log("Good MAC address");
-                log("MAC address: " + moduleAddress.str());
+//                log("Good MAC address");
+//                log("MAC address: " + moduleAddress.str());
             } catch (std::exception& e) {
-                log("Bad MAC address");
+//                log("Bad MAC address");
             }
 
             if (mac == moduleAddress) {
@@ -443,6 +443,7 @@ std::string FiDeController::getModuleMameByMac(MacAddress mac) {
 }
 
 std::vector<int> FiDeController::getPortsByMac(MacAddress mac) {
+    log("getPortsByMac");
     std::vector<int> res;
 
     std::string modulePath = getModuleMameByMac(mac);
@@ -450,16 +451,16 @@ std::vector<int> FiDeController::getPortsByMac(MacAddress mac) {
 
 
     // TODO: Make this into a map instead of iterating every time
-//    log("Tunnel links: ");
-//    std::vector<TrafficEngineering::Link> allLinks = tunnel.getAllLinks();
+    log("Tunnel links: ");
     std::vector<std::string> interfaceNames;
-//    for (auto i = allLinks.begin(); i < allLinks.end(); i++) {
-////        log("localNodeName: " + i->localNodeName);
-////        log("localInterfaceName: " + i->localInterfaceName);
-//        if (modulePath.compare(i->localInterfaceName) == 0) {
-//            interfaceNames.push_back(i->localInterfaceName);
-//        }
-//    }
+    for (auto i = links.begin(); i < links.end(); i++) {
+        log("localNodeName: " + i->localNodeName);
+        log("localInterfaceName: " + i->localInterfaceName);
+        if (modulePath.compare(i->localInterfaceName) == 0) {
+            log("Found a match");
+            interfaceNames.push_back(i->localInterfaceName);
+        }
+    }
 
     log("FiDe interfaces:");
     for (auto i = interfaceNames.begin(); i < interfaceNames.end(); i++) {
