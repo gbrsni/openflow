@@ -68,7 +68,10 @@ void FiDeController::initialize(int stage){
     log("Tunnel links: ");
     std::vector<TrafficEngineering::Link> links = tunnel.getAllLinks();
     for (auto i = links.begin(); i < links.end(); i++) {
-        log(i->localNodeName);
+        log("localNodeName: " + i->localNodeName);
+//        log("localNodeName: " + i->remoteNodeName);
+        log("localInterfaceName: " + i->localInterfaceName);
+//        log("remoteInterfaceName: " + i->remoteInterfaceName);
     }
 
     // Mine
