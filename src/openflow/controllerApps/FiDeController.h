@@ -42,6 +42,7 @@ protected:
 
 private:
     void log(std::string msg, bool warn=false);
+    std::string getModuleMameByMac(MacAddress mac);
     std::vector<int> getPortsByMac(MacAddress mac);
 };
 

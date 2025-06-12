@@ -387,6 +387,11 @@ void FiDeController::sendFlowTables(Packet* pkt){
     sendFlowModMessage(OFPFC_ADD, match, outport, socket, idleTimeout, hardTimeout, dscp);
 }
 
+std::string getModuleMameByMac(MacAddress mac) {
+    std::string res = "";
+    return res;
+}
+
 std::vector<int> getPortsByMac(MacAddress mac) {
     std::vector<int> res;
     return res;
