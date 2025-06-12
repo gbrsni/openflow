@@ -17,8 +17,12 @@
 #include "openflow/controllerApps/FiDeController.h"
 #include "openflow/messages/OFP_Features_Reply_m.h"
 
-#include <Topology.h>
+#include <algorithms.h>
+#include <applications.h>
+#include <Link.h>
 #include <tools.h>
+#include <Topology.h>
+#include <Tunnel.h>
 
 Define_Module(FiDeController);
 
@@ -40,18 +44,40 @@ void FiDeController::initialize(int stage){
     }
 
     // FiDe stuff
-//    // TE
+    // TE
     const std::vector<std::string> typenames = {"inet.node.inet.StandardHost", "openflow.openflow.switch.Open_Flow_Switch"};
-    TrafficEngineering::Topology topo = TrafficEngineering::makeTopologyFromCurrentNetwork(typenames);
+    TrafficEngineering::Topology topology = TrafficEngineering::makeTopologyFromCurrentNetwork(typenames);
     log("TE Topology made");
 
+    std::vector<TrafficEngineering::Tunnel> tunnels;
+
+//    std::string const& sender = "0A-AA-00-00-61";
+//    std::vector<std::string> const& receivers = {"0A-AA-00-00-52", "0A-AA-00-00-57"};
+
+    std::string const& sender = "Scenario_DynamicFatTree.fat_tree.client[1]";
+    std::vector<std::string> const& receivers = {"Scenario_DynamicFatTree.fat_tree.client[2]", "Scenario_DynamicFatTree.fat_tree.client[3]"};
+
+    TrafficEngineering::MulticastRequest request;
+    request.messageLength = 0;
+    request.sendInterval = 0;
+    request.appOwnerName = sender;
+    request.appReceiverNames = receivers;
+
+    TrafficEngineering::Tunnel tunnel = TrafficEngineering::optimization(topology, tunnels, request);
+
+    log("Tunnel links: ");
+    std::vector<TrafficEngineering::Link> links = tunnel.getAllLinks();
+    for (auto i = links.begin(); i < links.end(); i++) {
+        log(i->localNodeName);
+    }
+
     // Mine
-    const char* NodeType = "openflow.openflow.switch.Open_Flow_Switch";
-    int startNode = 0;
-
-
-    std::vector<std::string> nodeTypes = cStringTokenizer(NodeType).asVector();
-    topo_spanntree.extractByNedTypeName(nodeTypes);
+//    const char* NodeType = "openflow.openflow.switch.Open_Flow_Switch";
+//    int startNode = 0;
+//
+//
+//    std::vector<std::string> nodeTypes = cStringTokenizer(NodeType).asVector();
+    topo_spanntree.extractByNedTypeName(typenames);
     EV << "FiDeController cTopology found " << topo_spanntree.getNumNodes() << "\n";
 
     nodeInfo.resize(topo_spanntree.getNumNodes());
