@@ -363,6 +363,12 @@ void FiDeController::receiveSignal(cComponent *src, simsignal_t id, cObject *obj
                     log("Bad MAC address");
                 }
 
+                std::vector<int> ports = getPortsByMac(datapathMAC);
+
+                for (auto i = ports.begin(); i < ports.end(); i++) {
+                    log("port: " + std::to_string(*i));
+                }
+
 
                 sendFlowTables(pkt);
             }
@@ -435,7 +441,7 @@ std::string FiDeController::getModuleMameByMac(MacAddress mac) {
     return res;
 }
 
-std::vector<int> getPortsByMac(MacAddress mac) {
+std::vector<int> FiDeController::getPortsByMac(MacAddress mac) {
     std::vector<int> res;
     return res;
 }
