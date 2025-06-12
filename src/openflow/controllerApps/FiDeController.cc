@@ -387,8 +387,51 @@ void FiDeController::sendFlowTables(Packet* pkt){
     sendFlowModMessage(OFPFC_ADD, match, outport, socket, idleTimeout, hardTimeout, dscp);
 }
 
-std::string getModuleMameByMac(MacAddress mac) {
+std::string FiDeController::getModuleMameByMac(MacAddress mac) {
     std::string res = "";
+
+    for (int i = 0; i < topo_spanntree.getNumNodes(); i++) {
+        nodeInfo[i].moduleID = topo_spanntree.getNode(i)->getModuleId();
+        nodeInfo[i].treeNeighbors.resize(topo_spanntree.getNumNodes(),0);
+
+        auto module = topo_spanntree.getNode(i)->getModule();
+        auto modulePath = module->getFullPath();
+        log("Module Path: " + modulePath);
+
+        // Get eth[0], that is the control plane interface of the Open_Flow_Switch
+        auto submodule = module->getSubmodule("eth", 0);
+        if (submodule != nullptr) {
+            auto submodulePath = submodule->getFullPath();
+//            log("SubModule Path: " + submodulePath);
+
+            // Get interface's MAC address. This is the same address we'll find in the datapath id for openflow messages
+            std::string addressString = submodule->par("address").getValue().str(); // This adds quotation marks to the string! DFQ
+            // Remove trailing and leading "
+            addressString = addressString.substr(1, addressString.length()-2); // This slicing is inclusive for some reason
+            log("Address string: " + addressString);
+
+            MacAddress moduleAddress;
+            try {
+                auto cstr = addressString.c_str();
+                moduleAddress = MacAddress(cstr);
+                log("Good MAC address");
+                log("MAC address: " + moduleAddress.str());
+            } catch (std::exception& e) {
+                log("Bad MAC address");
+            }
+
+            if (mac == moduleAddress) {
+                return modulePath;
+            }
+
+
+        } else {
+            log("No eth[0] submodule found");
+        }
+    }
+
+    log("Couldn't get module name by MAC!", true);
+
     return res;
 }
 
