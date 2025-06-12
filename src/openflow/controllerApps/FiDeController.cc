@@ -49,7 +49,7 @@ void FiDeController::initialize(int stage){
 //    std::vector<std::string> const& receivers = {"0A-AA-00-00-52", "0A-AA-00-00-57"};
 
     std::string const& sender = "Scenario_DynamicFatTree.fat_tree.client[1]";
-    std::vector<std::string> const& receivers = {"Scenario_DynamicFatTree.fat_tree.client[2]", "Scenario_DynamicFatTree.fat_tree.client[3]"};
+    std::vector<std::string> const& receivers = {"Scenario_DynamicFatTree.fat_tree.client[2]", "Scenario_DynamicFatTree.fat_tree.client[3]", "Scenario_DynamicFatTree.fat_tree.client[4]", "Scenario_DynamicFatTree.fat_tree.client[6]"};
 
     TrafficEngineering::MulticastRequest request;
     request.messageLength = 0;
@@ -186,12 +186,19 @@ void FiDeController::sendFlowTables(Packet* pkt, std::vector<uint32_t> outports)
 
     match.wildcards= 0;
     match.wildcards |= OFPFW_ALL;
-    match.wildcards ^=  OFPFW_NW_DST_ALL; // Wildcard all but IPV4 destination
+//    match.wildcards ^=  OFPFW_NW_DST_ALL; // Wildcard all but IPV4 destination
 
     auto socket = controller->findSocketFor(pkt);
 
+    uint32_t outport;
+    if (outports.size() == 1) {
+        outport = outports.at(0);
+    } else {
+        outport = OFPP_FLOOD;
+    }
+
     // TODO: Allow flow entries to have array of outports
-//    sendFlowModMessage(OFPFC_ADD, match, outports, socket, idleTimeout, hardTimeout);
+    sendFlowModMessage(OFPFC_ADD, match, outport, socket, idleTimeout, hardTimeout);
 }
 
 std::string FiDeController::getModuleMameByMac(MacAddress mac) {
@@ -271,7 +278,7 @@ std::vector<uint32_t> FiDeController::getPortsByMac(MacAddress mac) {
         std::string portIDString = i->substr(i->length()-1, 1);
         log("portIDString: " + portIDString, false, true);
         int portID = std::stoi(portIDString) + 101;  // Ports are numbered from 101
-        log("portID: " + std::to_string(portID) + " for " + modulePath);
+        log("portID: " + std::to_string(portID) + " for " + modulePath, true);
         res.push_back(portID);
     }
 
