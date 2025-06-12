@@ -454,22 +454,22 @@ std::vector<int> FiDeController::getPortsByMac(MacAddress mac) {
     log("Tunnel links: ");
     std::vector<std::string> interfaceNames;
     for (auto i = links.begin(); i < links.end(); i++) {
-        log("localNodeName: " + i->localNodeName);
-        log("remoteNodeName: " + i->remoteNodeName);
-        log("localInterfaceName: " + i->localInterfaceName);
-        log("remoteInterfaceName: " + i->remoteInterfaceName);
+        log("localNodeName: " + i->localNodeName, false, true);
+        log("remoteNodeName: " + i->remoteNodeName, false, true);
+        log("localInterfaceName: " + i->localInterfaceName, false, true);
+        log("remoteInterfaceName: " + i->remoteInterfaceName, false, true);
         EV << "\n";
         if (modulePath.compare(i->localNodeName) == 0) {
-            log("Found a match");
+            log("Found a match", false, true);
             interfaceNames.push_back(i->localInterfaceName);
         }
     }
 
     log("FiDe interfaces:");
     for (auto i = interfaceNames.begin(); i < interfaceNames.end(); i++) {
-        log("Interface: " + *i);
+        log("Interface: " + *i, false, true);
         std::string portIDString = i->substr(i->length()-1, 1);
-        log("portIDString: " + portIDString);
+        log("portIDString: " + portIDString, false, true);
         int portID = std::stoi(portIDString) + 101;  // Ports are numbered from 101
         log("portID: " + std::to_string(portID) + " for " + modulePath);
         res.push_back(portID);
@@ -479,6 +479,7 @@ std::vector<int> FiDeController::getPortsByMac(MacAddress mac) {
     return res;
 }
 
+// TODO: Really should use an enum or smth
 void FiDeController::log(std::string msg, bool warn, bool debug) {
     if (warn) {
         EV_WARN << "FiDeController " << msg << "\n";
