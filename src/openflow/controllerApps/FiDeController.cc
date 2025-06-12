@@ -72,6 +72,8 @@ void FiDeController::initialize(int stage){
     }
 
     // Mine
+    // What this does is getting the MAC address on the control plane for the Open_Flow_Switch modules.
+    // This is useful later since that is the ID they use in OF packets they send to the controller
 //    const char* NodeType = "openflow.openflow.switch.Open_Flow_Switch";
 //    int startNode = 0;
 //
