@@ -384,6 +384,10 @@ void FiDeController::sendFlowTables(Packet* pkt){
     sendFlowModMessage(OFPFC_ADD, match, outport, socket, idleTimeout, hardTimeout, dscp);
 }
 
-void FiDeController::log(std::string msg) {
-    EV << "FiDeController " << msg << "\n";
+void FiDeController::log(std::string msg, bool warn) {
+    if (warn) {
+        EV_WARN << "FiDeController " << msg << "\n";
+    } else {
+        EV << "FiDeController " << msg << "\n";
+    }
 }

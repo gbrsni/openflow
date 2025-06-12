@@ -41,7 +41,7 @@ protected:
     NodeInfoVector nodeInfo;
 
 private:
-    void log(std::string msg);
+    void log(std::string msg, bool warn=false);
 };
 
 #endif /* OPENFLOW_CONTROLLERAPPS_FLOWTABLEPRELOADER_H_ */
