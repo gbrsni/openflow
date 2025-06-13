@@ -45,7 +45,6 @@ void FiDeController::initialize(int stage){
 
     std::vector<TrafficEngineering::Tunnel> tunnels;
 
-    // TODO: Make into parameters
 //    std::string const& sender = "Scenario_DynamicFatTree.fat_tree.client[1]";
 //    std::vector<std::string> const& receivers = {"Scenario_DynamicFatTree.fat_tree.client[2]", "Scenario_DynamicFatTree.fat_tree.client[3]", "Scenario_DynamicFatTree.fat_tree.client[4]", "Scenario_DynamicFatTree.fat_tree.client[6]"};
     std::string const& sender = par("sender");
