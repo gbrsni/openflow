@@ -45,9 +45,7 @@ void FiDeController::initialize(int stage){
 
     std::vector<TrafficEngineering::Tunnel> tunnels;
 
-//    std::string const& sender = "0A-AA-00-00-61";
-//    std::vector<std::string> const& receivers = {"0A-AA-00-00-52", "0A-AA-00-00-57"};
-
+    // TODO: Make into parameters
     std::string const& sender = "Scenario_DynamicFatTree.fat_tree.client[1]";
     std::vector<std::string> const& receivers = {"Scenario_DynamicFatTree.fat_tree.client[2]", "Scenario_DynamicFatTree.fat_tree.client[3]", "Scenario_DynamicFatTree.fat_tree.client[4]", "Scenario_DynamicFatTree.fat_tree.client[6]"};
 
@@ -68,14 +66,9 @@ void FiDeController::initialize(int stage){
 //        log("remoteInterfaceName: " + i->remoteInterfaceName);
     }
 
-    // Mine
+    // Get Open_Flow_Switch MACs
     // What this does is getting the MAC address on the control plane for the Open_Flow_Switch modules.
     // This is useful later since that is the ID they use in OF packets they send to the controller
-//    const char* NodeType = "openflow.openflow.switch.Open_Flow_Switch";
-//    int startNode = 0;
-//
-//
-//    std::vector<std::string> nodeTypes = cStringTokenizer(NodeType).asVector();
     topo_spanntree.extractByNedTypeName(typenames);
     EV << "FiDeController cTopology found " << topo_spanntree.getNumNodes() << "\n";
 
@@ -88,25 +81,11 @@ void FiDeController::initialize(int stage){
         auto modulePath = module->getFullPath();
         log("Module Path: " + modulePath);
 
-//        int submoduleID = module->findSubmodule("eth[0]");
-//        log("Submodule ID: " + submoduleID);
-//        auto submoduleVector = module->getSubmoduleVectorNames();
-//        log(submoduleVector.at(0));
-
         // Get eth[0], that is the control plane interface of the Open_Flow_Switch
         auto submodule = module->getSubmodule("eth", 0);
         if (submodule != nullptr) {
             auto submodulePath = submodule->getFullPath();
 //            log("SubModule Path: " + submodulePath);
-
-//            auto addressPar = submodule->("Address");
-
-//            auto numpars = submodule->getNumParams();
-//            for (int i = 0; i < numpars; i++) {
-//                auto parname = submodule->par(i).getName();
-//                std::string parstring(parname);
-//                log("Par name: " + (parstring));
-//            }
 
             // Get interface's MAC address. This is the same address we'll find in the datapath id for openflow messages
             std::string addressString = submodule->par("address").getValue().str(); // This adds quotation marks to the string! DFQ
@@ -166,16 +145,6 @@ void FiDeController::receiveSignal(cComponent *src, simsignal_t id, cObject *obj
             }
         }
     }
-//    if(id == PacketInSignalId){
-//        EV << "FiDeController::PacketIn" << '\n';
-//        auto pkt = dynamic_cast<Packet *>(obj);
-//        if (pkt != nullptr) {
-//            auto chunk = pkt->peekAtFront<Chunk>();
-//            auto packet_in_msg = dynamicPtrCast<const OFP_Packet_In>(chunk);
-//            if (packet_in_msg != nullptr)
-//                dropPacket(pkt);
-//        }
-//    }
 }
 
 void FiDeController::sendFlowTables(Packet* pkt, std::vector<uint32_t> outports){
