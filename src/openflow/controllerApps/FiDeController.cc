@@ -158,7 +158,7 @@ void FiDeController::sendFlowTables(Packet* pkt, std::vector<uint32_t> outports)
 
     match.wildcards= 0;
     match.wildcards |= OFPFW_ALL;
-//    match.wildcards ^=  OFPFW_NW_DST_ALL; // Wildcard all but IPV4 destination
+    match.wildcards ^=  OFPFW_NW_DST_ALL; // Wildcard all but IPV4 destination
 
     auto socket = controller->findSocketFor(pkt);
 
