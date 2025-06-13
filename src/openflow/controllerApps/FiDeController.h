@@ -37,6 +37,7 @@ protected:
     typedef std::vector<NodeInfo> NodeInfoVector;
     cTopology topo_spanntree;
     NodeInfoVector nodeInfo;
+    Ipv4Address multicastGroup;
 
 private:
     std::vector<std::string> parseReceivers(std::string str);

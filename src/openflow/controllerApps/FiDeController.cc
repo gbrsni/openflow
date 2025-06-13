@@ -37,6 +37,9 @@ FiDeController::~FiDeController() {
 void FiDeController::initialize(int stage){
     AbstractControllerApp::initialize(stage);
 
+    const char* multicastGroupString = par("multicastGroup");
+    multicastGroup = Ipv4Address(multicastGroupString);
+
     // FiDe stuff
     // TE
     const std::vector<std::string> typenames = {"inet.node.inet.StandardHost", "openflow.openflow.switch.Open_Flow_Switch"};
@@ -154,7 +157,7 @@ void FiDeController::sendFlowTables(Packet* pkt, std::vector<uint32_t> outports)
     log("sendFlowTables", DEBUG);
 
     oxm_basic_match match = oxm_basic_match();
-    match.OFB_IPV4_DST = Ipv4Address("224.0.1.3"); // TODO: Make into a parameter
+    match.OFB_IPV4_DST = multicastGroup;
 
     match.wildcards= 0;
     match.wildcards |= OFPFW_ALL;

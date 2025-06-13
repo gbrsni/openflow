@@ -21,4 +21,5 @@ simple FiDeController like AbstractControllerApp
         @display("i=block/app");
         string sender;
         string receivers;
+        string multicastGroup;
 }
