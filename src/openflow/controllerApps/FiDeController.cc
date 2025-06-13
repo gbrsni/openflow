@@ -103,8 +103,6 @@ void FiDeController::initialize(int stage){
                 log("Bad MAC address", DEBUG);
             }
 
-
-
         } else {
             log("No submodule found");
         }
