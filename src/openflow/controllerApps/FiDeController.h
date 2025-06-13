@@ -39,7 +39,18 @@ protected:
     NodeInfoVector nodeInfo;
 
 private:
-    void log(std::string msg, bool warn=false, bool debug=false);
+    // For the log function
+    enum loglevel {
+        TRACE,
+        DEBUG,
+//        DETAIL,
+        INFO,
+        WARN,
+//        ERROR,
+//        FATAL,
+    };
+
+    void log(std::string msg, int loglevel=INFO);
     std::string getModuleMameByMac(MacAddress mac);
     std::vector<uint32_t> getPortsByMac(MacAddress mac);
 
