@@ -32,6 +32,7 @@ inline bool operator==(const oxm_basic_match &m1, const oxm_basic_match& m2) {
             && m2.OFB_ETH_DST == m1.OFB_ETH_DST
             && m2.OFB_ETH_SRC == m1.OFB_ETH_SRC
             && m2.OFB_ETH_TYPE == m1.OFB_ETH_TYPE
+            && m2.OFB_IPV4_DST == m1.OFB_IPV4_DST
             && m2.OFB_ARP_OP == m1.OFB_ARP_OP
             && m2.OFB_ARP_SHA == m1.OFB_ARP_SHA
             && m2.OFB_ARP_SPA == m1.OFB_ARP_SPA

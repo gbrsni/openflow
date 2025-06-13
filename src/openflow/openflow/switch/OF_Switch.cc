@@ -484,6 +484,14 @@ void OF_Switch::processFrame(Packet *pkt){
         match.OFB_ARP_TPA = arpPacket->getDestIpAddress();
     }
 
+    //extract IPv4 specific match ETHERTYPE_IPv4 if present
+    if(frame->getTypeOrLength()==ETHERTYPE_IPv4){
+        auto ipv4Packet = pkt->peekAtFront<Ipv4Header>();
+        match.OFB_IPV4_DST = ipv4Packet->getDestAddress();
+        EV_WARN << match.OFB_IPV4_DST << "\n";
+    }
+
+
     pkt->insertAtFront(frame);
 
     unsigned long hash =0;

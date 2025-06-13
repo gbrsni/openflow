@@ -16,7 +16,8 @@ static inline int flow_fields_match(const oxm_basic_match &m1, const oxm_basic_m
     return (((w & OFPFW_IN_PORT) || m1.OFB_IN_PORT == m2.OFB_IN_PORT)
             && ((w & OFPFW_DL_TYPE) || m1.OFB_ETH_TYPE == m2.OFB_ETH_TYPE )
             && ((w & OFPFW_DL_SRC) || !m1.OFB_ETH_SRC.compareTo(m2.OFB_ETH_SRC))
-            && ((w & OFPFW_DL_DST) || !m1.OFB_ETH_DST.compareTo(m2.OFB_ETH_DST)));
+            && ((w & OFPFW_DL_DST) || !m1.OFB_ETH_DST.compareTo(m2.OFB_ETH_DST))
+            && ((w & OFPFW_NW_DST_ALL) || m1.OFB_IPV4_DST == m2.OFB_IPV4_DST));
 }
 
 void Flow_Table::addEntry(Flow_Table_Entry entry) {
