@@ -22,6 +22,10 @@ Flow_Table_Entry::Flow_Table_Entry(const OFP_Flow_Mod *flowModMsg){
 
     dscp = flowModMsg->getDscp();
 
+    for (int i = 0; i < flowModMsg->getOutportsArraySize(); i++) {
+        outports.push_back(flowModMsg->getOutports(i));
+    }
+
     if(idleTimeout != 0){
         expiresAt = idleTimeout+simTime();
     } else {
@@ -68,6 +72,11 @@ int Flow_Table_Entry::getPriority() const{
 int Flow_Table_Entry::getDscp() const{
     return dscp;
 }
+
+std::vector<uint32_t> Flow_Table_Entry::getOutports() {
+    return outports;
+}
+
 
 void Flow_Table_Entry::setCookie(flow_table_cookie cookie){
     this->cookie = cookie;

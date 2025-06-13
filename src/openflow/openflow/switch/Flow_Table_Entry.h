@@ -58,6 +58,7 @@ class Flow_Table_Entry {
         int getPriority() const;
 
         int getDscp() const;
+        std::vector<uint32_t> getOutports();
 
         void setCookie(flow_table_cookie cookie);
         void setCounters(flow_table_counters counters);
@@ -83,6 +84,7 @@ class Flow_Table_Entry {
         SimTime expiresAt;
 
         int dscp;
+        std::vector<uint32_t> outports;
 };
 
 #endif /* FLOW_TABLE_H_ */
