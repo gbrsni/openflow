@@ -39,6 +39,7 @@ protected:
     NodeInfoVector nodeInfo;
 
 private:
+    std::vector<std::string> parseReceivers(std::string str);
     // For the log function
     enum loglevel {
         TRACE,

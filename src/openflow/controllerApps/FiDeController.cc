@@ -47,8 +47,13 @@ void FiDeController::initialize(int stage){
 
     // TODO: Make into parameters
 //    std::string const& sender = "Scenario_DynamicFatTree.fat_tree.client[1]";
-    std::vector<std::string> const& receivers = {"Scenario_DynamicFatTree.fat_tree.client[2]", "Scenario_DynamicFatTree.fat_tree.client[3]", "Scenario_DynamicFatTree.fat_tree.client[4]", "Scenario_DynamicFatTree.fat_tree.client[6]"};
+//    std::vector<std::string> const& receivers = {"Scenario_DynamicFatTree.fat_tree.client[2]", "Scenario_DynamicFatTree.fat_tree.client[3]", "Scenario_DynamicFatTree.fat_tree.client[4]", "Scenario_DynamicFatTree.fat_tree.client[6]"};
     std::string const& sender = par("sender");
+    std::vector<std::string> const& receivers  = parseReceivers(par("receivers"));
+    log("receivers:", DEBUG);
+    for (auto i = receivers.begin(); i < receivers.end(); i++) {
+        log(*i, DEBUG);
+    }
 
     TrafficEngineering::MulticastRequest request;
     request.messageLength = 0;
@@ -167,6 +172,21 @@ void FiDeController::sendFlowTables(Packet* pkt, std::vector<uint32_t> outports)
 
     // TODO: Allow flow entries to have array of outports
     sendFlowModMessage(OFPFC_ADD, match, outport, socket, idleTimeout, hardTimeout);
+}
+
+std::vector<std::string> FiDeController::parseReceivers(std::string str) {
+    std::vector<std::string> res = {};
+    std::stringstream ss(str);
+
+    std::string tmp;
+
+    char del = ',';
+
+    while (getline(ss, tmp, del)) {
+        res.push_back(tmp);
+    }
+
+    return res;
 }
 
 std::string FiDeController::getModuleMameByMac(MacAddress mac) {
