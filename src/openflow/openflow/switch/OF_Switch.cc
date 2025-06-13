@@ -488,7 +488,6 @@ void OF_Switch::processFrame(Packet *pkt){
     if(frame->getTypeOrLength()==ETHERTYPE_IPv4){
         auto ipv4Packet = pkt->peekAtFront<Ipv4Header>();
         match.OFB_IPV4_DST = ipv4Packet->getDestAddress();
-        EV_WARN << match.OFB_IPV4_DST << "\n";
     }
 
 
