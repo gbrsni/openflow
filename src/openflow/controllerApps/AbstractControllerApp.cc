@@ -129,13 +129,13 @@ void AbstractControllerApp::sendPacket(Packet *packet_in_msg, uint32_t outport){
     controller->sendPacket(socket, msgAux);
 }
 
-void AbstractControllerApp::sendFlowModMessage(ofp_flow_mod_command mod_com, const oxm_basic_match &match, uint32_t outport, TcpSocket * socket, int idleTimeOut =1 , int hardTimeOut=0, int dscp){
+void AbstractControllerApp::sendFlowModMessage(ofp_flow_mod_command mod_com, const oxm_basic_match &match, uint32_t outport, TcpSocket * socket, int idleTimeOut =1 , int hardTimeOut=0, int dscp, std::vector<uint32_t> outports){
     if (controller == nullptr)
         throw cRuntimeError("Controller module is not initialized");
 
     EV << "sendFlowModMessage" << '\n';
     numFlowMod++;
-    auto msgAux = createFlowMod(mod_com,match,outport,idleTimeOut,hardTimeOut, dscp);
+    auto msgAux = createFlowMod(mod_com,match,outport,idleTimeOut,hardTimeOut, dscp, outports);
     controller->sendPacket(socket, msgAux);
 }
 
@@ -150,13 +150,21 @@ void AbstractControllerApp::finish(){
 
 
 //OFP_Flow_Mod * AbstractControllerApp::createFlowMod(ofp_flow_mod_command mod_com,const oxm_basic_match  &match, uint32_t outport, int idleTimeOut =1 , int hardTimeOut=0){
-Packet * AbstractControllerApp::createFlowMod(ofp_flow_mod_command mod_com,const oxm_basic_match  &match, uint32_t outport, int idleTimeOut =1 , int hardTimeOut=0, int dscp){
+Packet * AbstractControllerApp::createFlowMod(ofp_flow_mod_command mod_com,const oxm_basic_match  &match, uint32_t outport, int idleTimeOut =1 , int hardTimeOut=0, int dscp, std::vector<uint32_t> outports){
     //OFP_Flow_Mod *flow_mod_msg = new OFP_Flow_Mod("flow_mod");
     auto flow_mod_msg = makeShared<OFP_Flow_Mod>();
     auto pkt = new Packet("flow_mod");
 
     // 0 = Best Effort by default
     flow_mod_msg->setDscp(dscp);
+    if (outports.size() > 0) {
+        //    flow_mod_msg->setOutports(sizeof(outports), outports);
+        //    flow_mod_msg->setOutportsArraySize(sizeof(outports));
+            for (auto i = outports.begin(); i < outports.end(); i++) {
+                EV_WARN << "Outport: " << *i << "\n";
+                flow_mod_msg->appendOutports(*i);
+            }
+    }
 
     flow_mod_msg->getHeaderForUpdate().version = OFP_VERSION;
     flow_mod_msg->getHeaderForUpdate().type = OFPT_FLOW_MOD;

@@ -40,4 +40,5 @@ class OFP_Flow_Mod extends Open_Flow_Message
     
     int dscp;
 
+	uint32_t outports[];
 }
