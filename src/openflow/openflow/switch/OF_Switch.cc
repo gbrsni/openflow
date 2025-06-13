@@ -520,6 +520,7 @@ void OF_Switch::processFrame(Packet *pkt){
    std::list<Flow_Table_Entry*> entries = flowTable.lookup(match);
 
    uint32_t outport = -1;
+   std::vector<uint32_t> outports;
 
    if ((*entries.begin()) != NULL){
        //lookup successful
@@ -561,10 +562,15 @@ void OF_Switch::processFrame(Packet *pkt){
            if (action_output.port != -1) {
                outport = action_output.port;
            }
+           // Multiple outports
+           if (lookup->getOutports().size() > 0) {
+               EV_DEBUG << "Have multiple ports in match" << "\n";
+               outports = lookup->getOutports();
+           }
        }
    }
 
-   if ((*entries.begin()) == NULL || outport == -1) {
+   if ((*entries.begin()) == NULL || (outport == -1 && outports.size() == 0)) {
        if(hash !=0){
            emit(cpPingPacketHash,hash);
        }
@@ -572,6 +578,28 @@ void OF_Switch::processFrame(Packet *pkt){
        flowTableMiss++;
        EV << "No Entry Found contacting controller" << '\n';
        handleMissMatchedPacket(pkt);
+       return;
+   }
+
+   if (outports.size() > 0) {
+       EV_DEBUG << "Iterating over multiple ports" << "\n";
+       for (auto p = outports.begin(); p < outports.end(); p++) {
+           outport = *p;
+           EV_DEBUG << "Port: " << *p << "\n";
+           if(hash !=0){
+               emit(dpPingPacketHash,hash);
+           }
+           //send it out the dataplane on the specific port
+           auto indexPort = getIndexFromId(outport);
+           if (indexPort == -1)
+               throw cRuntimeError("Unknown dataPlaneOut sending port/gate");
+           auto pktDup = pkt->dup();
+           pktDup->removeTagIfPresent<DispatchProtocolReq>();
+           pktDup->addTagIfAbsent<PacketProtocolTag>()->setProtocol(&Protocol::ethernetMac);
+           pktDup->addTagIfAbsent<InterfaceReq>()->setInterfaceId(outport);
+           send(pktDup, "dataPlaneOut");
+       }
+
        return;
    }
 
