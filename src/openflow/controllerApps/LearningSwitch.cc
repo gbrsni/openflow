@@ -72,9 +72,8 @@ void LearningSwitch::doSwitching(Packet *packet_in_msg){
             match.OFB_IN_PORT = headerFields.inport;
 
             match.wildcards= 0;
-            match.wildcards |= OFPFW_IN_PORT;
-            match.wildcards |=  OFPFW_DL_SRC;
-            match.wildcards |= OFPFW_DL_TYPE;
+            match.wildcards |= OFPFW_ALL;
+            match.wildcards ^=  OFPFW_DL_DST;
 
 
 
