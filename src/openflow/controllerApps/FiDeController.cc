@@ -172,7 +172,6 @@ void FiDeController::sendFlowTables(Packet* pkt, std::vector<uint32_t> outports)
 //        outport = OFPP_FLOOD;
 //    }
 
-    // TODO: Allow flow entries to have array of outports
     sendFlowModMessage(OFPFC_ADD, match, outport, socket, idleTimeout, hardTimeout, -1, outports);
 }
 
