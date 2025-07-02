@@ -77,7 +77,7 @@ void FiDeController::initialize(int stage){
     // Get Open_Flow_Switch MACs
     // What this does is getting the MAC address on the control plane for the Open_Flow_Switch modules.
     // This is useful later since that is the ID they use in OF packets they send to the controller
-    topo_spanntree.extractByNedTypeName(typenames);
+    topo_spanntree.extractByNedTypeName(typenames); // TODO: rename variable
     log("FiDeController cTopology found " + std::to_string(topo_spanntree.getNumNodes()));
 
     nodeInfo.resize(topo_spanntree.getNumNodes());
