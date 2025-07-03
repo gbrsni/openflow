@@ -41,91 +41,92 @@ void FiDeController::initialize(int stage){
 
     const std::vector<std::string> typenames = {"inet.node.inet.StandardHost", "openflow.openflow.switch.Open_Flow_Switch"};
 
-//    if (stage == INITSTAGE_APPLICATION_LAYER) // TODO: run init only once
+    if (stage == INITSTAGE_APPLICATION_LAYER) {
+        // Object parameters
+        cValueArray* fideGroupArray = check_and_cast<cValueArray*>(par("fideGroups").objectValue());
+        for (int i = 0; i < fideGroupArray->size(); ++i) {
+            auto fideGroup = check_and_cast<cValueMap*>(fideGroupArray->get(i).objectValue()); // Don't you just love broken manual examples? :D Thankfully the INET source code is avaiable...
 
-    // Object parameters
-    cValueArray* fideGroupArray = check_and_cast<cValueArray*>(par("fideGroups").objectValue());
-    for (int i = 0; i < fideGroupArray->size(); ++i) {
-        auto fideGroup = check_and_cast<cValueMap*>(fideGroupArray->get(i).objectValue()); // Don't you just love broken manual examples? :D Thankfully the INET source code is avaiable...
+            std::string sender = (*fideGroup)["sender"].stringValue();
+            std::vector<std::string> receivers = parseReceivers((*fideGroup)["receivers"].stringValue());
+            Ipv4Address multicastGroup = Ipv4Address((*fideGroup)["multicastGroup"].stringValue());
 
-        std::string sender = (*fideGroup)["sender"].stringValue();
-        std::vector<std::string> receivers = parseReceivers((*fideGroup)["receivers"].stringValue());
-        Ipv4Address multicastGroup = Ipv4Address((*fideGroup)["multicastGroup"].stringValue());
-
-        log("Current FiDe group:", DEBUG);
-        log("Sender:", DEBUG);
-        log(sender, DEBUG);
-        log("Receivers:", DEBUG);
-        for (auto i = receivers.begin(); i < receivers.end(); i++) {
-            log(*i, DEBUG);
-        }
-        log("Multicast group:", DEBUG);
-        log(multicastGroup.str(), DEBUG);
-
-        // FiDe stuff
-        // TE
-        TrafficEngineering::Topology topology = TrafficEngineering::makeTopologyFromCurrentNetwork(typenames);
-        log("TE Topology made");
-
-        TrafficEngineering::MulticastRequest request;
-        request.messageLength = 0; // TODO: Make these into parameters
-        request.sendInterval = 0; //
-        request.appOwnerName = sender;
-        request.appReceiverNames = receivers;
-
-        TrafficEngineering::Tunnel tunnel = TrafficEngineering::optimization(topology, tunnels, request);
-
-        log("Tunnel links: ", DEBUG);
-        links.emplace(multicastGroup, tunnel.getAllLinks());
-        for (auto i = links[multicastGroup].begin(); i < links[multicastGroup].end(); i++) {
-            log("localNodeName: " + i->localNodeName, DEBUG);
-            log("localNodeName: " + i->remoteNodeName, DEBUG);
-            log("localInterfaceName: " + i->localInterfaceName, DEBUG);
-            log("remoteInterfaceName: " + i->remoteInterfaceName, DEBUG);
-        }
-    }
-
-    // Get Open_Flow_Switch MACs
-    // What this does is getting the MAC address on the control plane for the Open_Flow_Switch modules.
-    // This is useful later since that is the ID they use in OF packets they send to the controller
-    topo_SwitchMACs.extractByNedTypeName(typenames);
-    log("FiDeController cTopology found " + std::to_string(topo_SwitchMACs.getNumNodes()));
-
-    nodeInfo.resize(topo_SwitchMACs.getNumNodes());
-    for (int i = 0; i < topo_SwitchMACs.getNumNodes(); i++) {
-        nodeInfo[i].moduleID = topo_SwitchMACs.getNode(i)->getModuleId();
-        nodeInfo[i].treeNeighbors.resize(topo_SwitchMACs.getNumNodes(),0);
-
-        auto module = topo_SwitchMACs.getNode(i)->getModule();
-        auto modulePath = module->getFullPath();
-        log("Module Path: " + modulePath, DEBUG);
-
-        // Get eth[0], that is the control plane interface of the Open_Flow_Switch
-        auto submodule = module->getSubmodule("eth", 0);
-        if (submodule != nullptr) {
-            auto submodulePath = submodule->getFullPath();
-            log("SubModule Path: " + submodulePath, TRACE);
-
-            // Get interface's MAC address. This is the same address we'll find in the datapath id for openflow messages
-            std::string addressString = submodule->par("address").getValue().str(); // This adds quotation marks to the string! DFQ
-            // Remove trailing and leading "
-            addressString = addressString.substr(1, addressString.length()-2);
-            log("Address string: " + addressString, DEBUG);
-
-            MacAddress moduleAddress;
-            try {
-                auto cstr = addressString.c_str();
-                moduleAddress = MacAddress(cstr);
-                log("Good MAC address", DEBUG);
-                log("MAC address: " + moduleAddress.str(), DEBUG);
-            } catch (std::exception& e) {
-                log("Bad MAC address", DEBUG);
+            log("Current FiDe group:", DEBUG);
+            log("Sender:", DEBUG);
+            log(sender, DEBUG);
+            log("Receivers:", DEBUG);
+            for (auto i = receivers.begin(); i < receivers.end(); i++) {
+                log(*i, DEBUG);
             }
+            log("Multicast group:", DEBUG);
+            log(multicastGroup.str(), DEBUG);
 
-        } else {
-            log("No submodule found");
+            // FiDe stuff
+            // TE
+            TrafficEngineering::Topology topology = TrafficEngineering::makeTopologyFromCurrentNetwork(typenames);
+            log("TE Topology made");
+
+            TrafficEngineering::MulticastRequest request;
+            request.messageLength = 0; // TODO: Make these into parameters
+            request.sendInterval = 0; //
+            request.appOwnerName = sender;
+            request.appReceiverNames = receivers;
+
+            TrafficEngineering::Tunnel tunnel = TrafficEngineering::optimization(topology, tunnels, request);
+
+            log("Tunnel links: ", DEBUG);
+            links.emplace(multicastGroup, tunnel.getAllLinks());
+            for (auto i = links[multicastGroup].begin(); i < links[multicastGroup].end(); i++) {
+                log("localNodeName: " + i->localNodeName, DEBUG);
+                log("localNodeName: " + i->remoteNodeName, DEBUG);
+                log("localInterfaceName: " + i->localInterfaceName, DEBUG);
+                log("remoteInterfaceName: " + i->remoteInterfaceName, DEBUG);
+            }
+        }
+
+        // Get Open_Flow_Switch MACs
+        // What this does is getting the MAC address on the control plane for the Open_Flow_Switch modules.
+        // This is useful later since that is the ID they use in OF packets they send to the controller
+        topo_SwitchMACs.extractByNedTypeName(typenames);
+        log("FiDeController cTopology found " + std::to_string(topo_SwitchMACs.getNumNodes()));
+
+        nodeInfo.resize(topo_SwitchMACs.getNumNodes());
+        for (int i = 0; i < topo_SwitchMACs.getNumNodes(); i++) {
+            nodeInfo[i].moduleID = topo_SwitchMACs.getNode(i)->getModuleId();
+            nodeInfo[i].treeNeighbors.resize(topo_SwitchMACs.getNumNodes(),0);
+
+            auto module = topo_SwitchMACs.getNode(i)->getModule();
+            auto modulePath = module->getFullPath();
+            log("Module Path: " + modulePath, DEBUG);
+
+            // Get eth[0], that is the control plane interface of the Open_Flow_Switch
+            auto submodule = module->getSubmodule("eth", 0);
+            if (submodule != nullptr) {
+                auto submodulePath = submodule->getFullPath();
+                log("SubModule Path: " + submodulePath, TRACE);
+
+                // Get interface's MAC address. This is the same address we'll find in the datapath id for openflow messages
+                std::string addressString = submodule->par("address").getValue().str(); // This adds quotation marks to the string! DFQ
+                // Remove trailing and leading "
+                addressString = addressString.substr(1, addressString.length()-2);
+                log("Address string: " + addressString, DEBUG);
+
+                MacAddress moduleAddress;
+                try {
+                    auto cstr = addressString.c_str();
+                    moduleAddress = MacAddress(cstr);
+                    log("Good MAC address", DEBUG);
+                    log("MAC address: " + moduleAddress.str(), DEBUG);
+                } catch (std::exception& e) {
+                    log("Bad MAC address", DEBUG);
+                }
+
+            } else {
+                log("No submodule found");
+            }
         }
     }
+
 }
 
 void FiDeController::receiveSignal(cComponent *src, simsignal_t id, cObject *obj, cObject *details) {
