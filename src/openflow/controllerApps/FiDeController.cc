@@ -71,8 +71,8 @@ void FiDeController::initialize(int stage){
         std::vector<TrafficEngineering::Tunnel> tunnels;
 
         TrafficEngineering::MulticastRequest request;
-        request.messageLength = 0;
-        request.sendInterval = 0;
+        request.messageLength = 0; // TODO: Make these into parameters
+        request.sendInterval = 0; //
         request.appOwnerName = sender;
         request.appReceiverNames = receivers;
 
