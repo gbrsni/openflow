@@ -84,6 +84,7 @@ void FiDeController::initialize(int stage){
             log("Result", INFO);
             log("minLatency: " + std::to_string(minLatency), INFO);
             log("maxJitter: " + std::to_string(maxJitter) , INFO);
+            log("", INFO);
 
             log("Tunnel links: ", DEBUG);
             links.emplace(multicastGroup, tunnel.getAllLinks());
