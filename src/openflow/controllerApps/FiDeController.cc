@@ -70,8 +70,6 @@ void FiDeController::initialize(int stage){
 
     std::vector<TrafficEngineering::Tunnel> tunnels;
 
-//    std::string const& sender = "Scenario_DynamicFatTree.fat_tree.client[1]";
-//    std::vector<std::string> const& receivers = {"Scenario_DynamicFatTree.fat_tree.client[2]", "Scenario_DynamicFatTree.fat_tree.client[3]", "Scenario_DynamicFatTree.fat_tree.client[4]", "Scenario_DynamicFatTree.fat_tree.client[6]"};
     std::string const& sender = par("sender");
     std::vector<std::string> const& receivers  = parseReceivers(par("receivers"));
     log("receivers:", DEBUG);
@@ -163,16 +161,19 @@ void FiDeController::receiveSignal(cComponent *src, simsignal_t id, cObject *obj
                     log("Bad MAC address");
                 }
 
-                // TODO: Iterate through groups, get ports for current iteration group
-                std::vector<uint32_t> ports = getPortsByMacAndGroup(datapathMAC, multicastGroup);
+                for (auto i = links.begin(); i != links.end(); i++) {
+                    Ipv4Address multicastGroup = i->first;
+                    log("Current group: " + multicastGroup.str());
 
-                log("Ports:");
-                for (auto i = ports.begin(); i < ports.end(); i++) {
-                    log("port: " + std::to_string(*i));
+                    std::vector<uint32_t> ports = getPortsByMacAndGroup(datapathMAC, multicastGroup);
+
+                    log("Ports:");
+                    for (auto i = ports.begin(); i < ports.end(); i++) {
+                        log("port: " + std::to_string(*i));
+                    }
+
+                    sendFlowTables(pkt, ports, multicastGroup);
                 }
-
-                // TODO: Pass current iteration group as parameter
-                sendFlowTables(pkt, ports, multicastGroup);
             }
         }
     }
