@@ -43,19 +43,19 @@ void FiDeController::initialize(int stage){
 
     // Object parameters
 
-    std::string dest;
-    std::vector<std::string> recs;
+    std::string sender;
+    std::vector<std::string> receivers;
 
     cValueArray* fideGroupArray = check_and_cast<cValueArray*>(par("fideGroups").objectValue());
     for (int i = 0; i < fideGroupArray->size(); ++i) {
         auto fideGroup = check_and_cast<cValueMap*>(fideGroupArray->get(i).objectValue()); // Don't you just love broken manual examples? :D Thankfully the INET source code is avaiable...
 
-        dest = (*fideGroup)["sender"].stringValue();
-        recs = parseReceivers((*fideGroup)["receivers"].stringValue());
+        sender = (*fideGroup)["sender"].stringValue();
+        receivers = parseReceivers((*fideGroup)["receivers"].stringValue());
     }
 
-    log(dest, WARN);
-    for (auto i = recs.begin(); i < recs.end(); i++) {
+    log(sender, WARN);
+    for (auto i = receivers.begin(); i < receivers.end(); i++) {
         log(*i, WARN);
     }
 
@@ -70,8 +70,8 @@ void FiDeController::initialize(int stage){
 
     std::vector<TrafficEngineering::Tunnel> tunnels;
 
-    std::string const& sender = par("sender");
-    std::vector<std::string> const& receivers  = parseReceivers(par("receivers"));
+//    std::string const& sender = par("sender");
+//    std::vector<std::string> const& receivers  = parseReceivers(par("receivers"));
     log("receivers:", DEBUG);
     for (auto i = receivers.begin(); i < receivers.end(); i++) {
         log(*i, DEBUG);
