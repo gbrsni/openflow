@@ -24,6 +24,8 @@
 #include <Topology.h>
 #include <Tunnel.h>
 
+#include <omnetpp.h>
+
 Define_Module(FiDeController);
 
 
@@ -36,6 +38,26 @@ FiDeController::~FiDeController() {
 
 void FiDeController::initialize(int stage){
     AbstractControllerApp::initialize(stage);
+
+//    if (stage == INITSTAGE_APPLICATION_LAYER) // TODO: run init only once
+
+    // Object parameters
+
+    std::string dest;
+    std::vector<std::string> recs;
+
+    cValueArray* fideGroupArray = check_and_cast<cValueArray*>(par("fideGroups").objectValue());
+    for (int i = 0; i < fideGroupArray->size(); ++i) {
+        auto fideGroup = check_and_cast<cValueMap*>(fideGroupArray->get(i).objectValue()); // Don't you just love broken manual examples? :D Thankfully the INET source code is avaiable...
+
+        dest = (*fideGroup)["sender"].stringValue();
+        recs = parseReceivers((*fideGroup)["receivers"].stringValue());
+    }
+
+    log(dest, WARN);
+    for (auto i = recs.begin(); i < recs.end(); i++) {
+        log(*i, WARN);
+    }
 
     const char* multicastGroupString = par("multicastGroup");
     multicastGroup = Ipv4Address(multicastGroupString);

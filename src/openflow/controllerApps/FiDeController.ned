@@ -22,4 +22,13 @@ simple FiDeController like AbstractControllerApp
         string sender;
         string receivers;
         string multicastGroup;
+        
+        object fideGroups;
+//         = [
+//        	{
+//        	    sender: "Scenario_DynamicFatTree.fat_tree.client[1]",
+//        	    receivers: "Scenario_DynamicFatTree.fat_tree.client[2],Scenario_DynamicFatTree.fat_tree.client[3],Scenario_DynamicFatTree.fat_tree.client[10]",
+//        	    multicastGroup: "224.0.1.3"
+//        	},
+//        ];
 }
