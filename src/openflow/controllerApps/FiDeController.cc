@@ -55,14 +55,12 @@ void FiDeController::initialize(int stage){
             float sendInterval = (*fideGroup)["sendInterval"].doubleValue();
 
             log("Current FiDe group:", INFO);
-            log("Sender:", INFO);
-            log(sender, INFO);
+            log("Sender: " + sender, INFO);
             log("Receivers:", INFO);
             for (auto i = receivers.begin(); i < receivers.end(); i++) {
                 log(*i, INFO);
             }
-            log("Multicast group:", INFO);
-            log(multicastGroup.str(), INFO);
+            log("Multicast group: " + multicastGroup.str(), INFO);
             log("messageLength: " + std::to_string(messageLength), INFO);
             log("sendInterval: " + std::to_string(sendInterval), INFO);
 
