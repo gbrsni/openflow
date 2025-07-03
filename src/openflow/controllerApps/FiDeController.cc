@@ -39,60 +39,58 @@ FiDeController::~FiDeController() {
 void FiDeController::initialize(int stage){
     AbstractControllerApp::initialize(stage);
 
+    const std::vector<std::string> typenames = {"inet.node.inet.StandardHost", "openflow.openflow.switch.Open_Flow_Switch"};
+
 //    if (stage == INITSTAGE_APPLICATION_LAYER) // TODO: run init only once
 
     // Object parameters
-
-    std::string sender;
-    std::vector<std::string> receivers;
-
     cValueArray* fideGroupArray = check_and_cast<cValueArray*>(par("fideGroups").objectValue());
     for (int i = 0; i < fideGroupArray->size(); ++i) {
         auto fideGroup = check_and_cast<cValueMap*>(fideGroupArray->get(i).objectValue()); // Don't you just love broken manual examples? :D Thankfully the INET source code is avaiable...
 
-        sender = (*fideGroup)["sender"].stringValue();
-        receivers = parseReceivers((*fideGroup)["receivers"].stringValue());
-    }
+        std::string sender = (*fideGroup)["sender"].stringValue();
+        std::vector<std::string> receivers = parseReceivers((*fideGroup)["receivers"].stringValue());
+        Ipv4Address multicastGroup = Ipv4Address((*fideGroup)["multicastGroup"].stringValue());
 
-    log(sender, WARN);
-    for (auto i = receivers.begin(); i < receivers.end(); i++) {
-        log(*i, WARN);
-    }
+        log(sender, WARN);
+        for (auto i = receivers.begin(); i < receivers.end(); i++) {
+            log(*i, WARN);
+        }
 
-    const char* multicastGroupString = par("multicastGroup");
-    multicastGroup = Ipv4Address(multicastGroupString);
+//        const char* multicastGroupString = par("multicastGroup");
+//        multicastGroup = Ipv4Address(multicastGroupString);
 
-    // FiDe stuff
-    // TE
-    const std::vector<std::string> typenames = {"inet.node.inet.StandardHost", "openflow.openflow.switch.Open_Flow_Switch"};
-    TrafficEngineering::Topology topology = TrafficEngineering::makeTopologyFromCurrentNetwork(typenames);
-    log("TE Topology made");
+        // FiDe stuff
+        // TE
+        TrafficEngineering::Topology topology = TrafficEngineering::makeTopologyFromCurrentNetwork(typenames);
+        log("TE Topology made");
 
-    std::vector<TrafficEngineering::Tunnel> tunnels;
+        std::vector<TrafficEngineering::Tunnel> tunnels;
 
-//    std::string const& sender = par("sender");
-//    std::vector<std::string> const& receivers  = parseReceivers(par("receivers"));
-    log("receivers:", DEBUG);
-    for (auto i = receivers.begin(); i < receivers.end(); i++) {
-        log(*i, DEBUG);
-    }
+    //    std::string const& sender = par("sender");
+    //    std::vector<std::string> const& receivers  = parseReceivers(par("receivers"));
+        log("receivers:", DEBUG);
+        for (auto i = receivers.begin(); i < receivers.end(); i++) {
+            log(*i, DEBUG);
+        }
 
-    TrafficEngineering::MulticastRequest request;
-    request.messageLength = 0;
-    request.sendInterval = 0;
-    request.appOwnerName = sender;
-    request.appReceiverNames = receivers;
+        TrafficEngineering::MulticastRequest request;
+        request.messageLength = 0;
+        request.sendInterval = 0;
+        request.appOwnerName = sender;
+        request.appReceiverNames = receivers;
 
-    TrafficEngineering::Tunnel tunnel = TrafficEngineering::optimization(topology, tunnels, request);
+        TrafficEngineering::Tunnel tunnel = TrafficEngineering::optimization(topology, tunnels, request);
 
-    log("Tunnel links: ", DEBUG);
-//    links[multicastGroup] = tunnel.getAllLinks();
-    links.emplace(multicastGroup, tunnel.getAllLinks());
-    for (auto i = links[multicastGroup].begin(); i < links[multicastGroup].end(); i++) {
-        log("localNodeName: " + i->localNodeName, DEBUG);
-        log("localNodeName: " + i->remoteNodeName, DEBUG);
-        log("localInterfaceName: " + i->localInterfaceName, DEBUG);
-        log("remoteInterfaceName: " + i->remoteInterfaceName, DEBUG);
+        log("Tunnel links: ", DEBUG);
+    //    links[multicastGroup] = tunnel.getAllLinks();
+        links.emplace(multicastGroup, tunnel.getAllLinks());
+        for (auto i = links[multicastGroup].begin(); i < links[multicastGroup].end(); i++) {
+            log("localNodeName: " + i->localNodeName, DEBUG);
+            log("localNodeName: " + i->remoteNodeName, DEBUG);
+            log("localInterfaceName: " + i->localInterfaceName, DEBUG);
+            log("remoteInterfaceName: " + i->remoteInterfaceName, DEBUG);
+        }
     }
 
     // Get Open_Flow_Switch MACs
