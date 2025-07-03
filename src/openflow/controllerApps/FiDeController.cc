@@ -190,11 +190,6 @@ void FiDeController::sendFlowTables(Packet* pkt, std::vector<uint32_t> outports,
     auto socket = controller->findSocketFor(pkt);
 
     uint32_t outport = -1;
-//    if (outports.size() == 1) {
-//        outport = outports.at(0);
-//    } else {
-//        outport = OFPP_FLOOD;
-//    }
 
     sendFlowModMessage(OFPFC_ADD, match, outport, socket, idleTimeout, hardTimeout, -1, outports);
 }
