@@ -51,15 +51,15 @@ void FiDeController::initialize(int stage){
             std::vector<std::string> receivers = parseReceivers((*fideGroup)["receivers"].stringValue());
             Ipv4Address multicastGroup = Ipv4Address((*fideGroup)["multicastGroup"].stringValue());
 
-            log("Current FiDe group:", DEBUG);
-            log("Sender:", DEBUG);
-            log(sender, DEBUG);
-            log("Receivers:", DEBUG);
+            log("Current FiDe group:", INFO);
+            log("Sender:", INFO);
+            log(sender, INFO);
+            log("Receivers:", INFO);
             for (auto i = receivers.begin(); i < receivers.end(); i++) {
-                log(*i, DEBUG);
+                log(*i, INFO);
             }
-            log("Multicast group:", DEBUG);
-            log(multicastGroup.str(), DEBUG);
+            log("Multicast group:", INFO);
+            log(multicastGroup.str(), INFO);
 
             // FiDe stuff
             // TE
@@ -67,8 +67,8 @@ void FiDeController::initialize(int stage){
             log("TE Topology made");
 
             TrafficEngineering::MulticastRequest request;
-            request.messageLength = 0; // TODO: Make these into parameters
-            request.sendInterval = 0; //
+            request.messageLength = 128 * 8; // TODO: Make these into parameters
+            request.sendInterval = 1; //
             request.appOwnerName = sender;
             request.appReceiverNames = receivers;
 
@@ -78,9 +78,9 @@ void FiDeController::initialize(int stage){
             auto result = adjustment(tunnels);
             float minLatency = result[0].minDelay;
             float maxJitter = result[0].maxDelay - result[0].minDelay;
-            log("Result", WARN);
-            log("minLatency: " + std::to_string(minLatency), WARN);
-            log("maxJitter: " + std::to_string(maxJitter) , WARN);
+            log("Result", INFO);
+            log("minLatency: " + std::to_string(minLatency), INFO);
+            log("maxJitter: " + std::to_string(maxJitter) , INFO);
 
             log("Tunnel links: ", DEBUG);
             links.emplace(multicastGroup, tunnel.getAllLinks());
