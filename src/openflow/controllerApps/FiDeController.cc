@@ -53,10 +53,13 @@ void FiDeController::initialize(int stage){
         Ipv4Address multicastGroup = Ipv4Address((*fideGroup)["multicastGroup"].stringValue());
 
         log("Current FiDe group:", DEBUG);
+        log("Sender:", DEBUG);
         log(sender, DEBUG);
+        log("Receivers:", DEBUG);
         for (auto i = receivers.begin(); i < receivers.end(); i++) {
             log(*i, DEBUG);
         }
+        log("Multicast group:", DEBUG);
         log(multicastGroup.str(), DEBUG);
 
         // FiDe stuff
@@ -64,12 +67,8 @@ void FiDeController::initialize(int stage){
         TrafficEngineering::Topology topology = TrafficEngineering::makeTopologyFromCurrentNetwork(typenames);
         log("TE Topology made");
 
+        // TODO: Make this class global, for proper resource allocation
         std::vector<TrafficEngineering::Tunnel> tunnels;
-
-        log("receivers:", DEBUG);
-        for (auto i = receivers.begin(); i < receivers.end(); i++) {
-            log(*i, DEBUG);
-        }
 
         TrafficEngineering::MulticastRequest request;
         request.messageLength = 0;
@@ -80,7 +79,6 @@ void FiDeController::initialize(int stage){
         TrafficEngineering::Tunnel tunnel = TrafficEngineering::optimization(topology, tunnels, request);
 
         log("Tunnel links: ", DEBUG);
-    //    links[multicastGroup] = tunnel.getAllLinks();
         links.emplace(multicastGroup, tunnel.getAllLinks());
         for (auto i = links[multicastGroup].begin(); i < links[multicastGroup].end(); i++) {
             log("localNodeName: " + i->localNodeName, DEBUG);
