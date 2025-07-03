@@ -162,6 +162,7 @@ void FiDeController::receiveSignal(cComponent *src, simsignal_t id, cObject *obj
                     log("Bad MAC address");
                 }
 
+                // TODO: Iterate through groups, get ports for current iteration group
                 std::vector<uint32_t> ports = getPortsByMac(datapathMAC);
 
                 log("Ports:");
@@ -169,13 +170,14 @@ void FiDeController::receiveSignal(cComponent *src, simsignal_t id, cObject *obj
                     log("port: " + std::to_string(*i));
                 }
 
-                sendFlowTables(pkt, ports);
+                // TODO: Pass current iteration group as parameter
+                sendFlowTables(pkt, ports, multicastGroup);
             }
         }
     }
 }
 
-void FiDeController::sendFlowTables(Packet* pkt, std::vector<uint32_t> outports){
+void FiDeController::sendFlowTables(Packet* pkt, std::vector<uint32_t> outports, Ipv4Address multicastGroup){
     log("sendFlowTables", DEBUG);
 
     oxm_basic_match match = oxm_basic_match();

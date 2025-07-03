@@ -16,7 +16,7 @@ public:
 protected:
     void receiveSignal(cComponent *src, simsignal_t id, cObject *obj, cObject *details) override;
     void initialize(int stage) override;
-    void sendFlowTables(Packet* packet_in_msg, std::vector<uint32_t> outports);
+    void sendFlowTables(Packet* packet_in_msg, std::vector<uint32_t> outports, Ipv4Address multicastGroup);
 
     cXMLElement *configuration = nullptr;
     int idleTimeout = -1;
