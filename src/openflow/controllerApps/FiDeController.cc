@@ -51,6 +51,9 @@ void FiDeController::initialize(int stage){
             std::vector<std::string> receivers = parseReceivers((*fideGroup)["receivers"].stringValue());
             Ipv4Address multicastGroup = Ipv4Address((*fideGroup)["multicastGroup"].stringValue());
 
+            float messageLength = (*fideGroup)["messageLength"].doubleValue();
+            float sendInterval = (*fideGroup)["sendInterval"].doubleValue();
+
             log("Current FiDe group:", INFO);
             log("Sender:", INFO);
             log(sender, INFO);
@@ -67,8 +70,8 @@ void FiDeController::initialize(int stage){
             log("TE Topology made");
 
             TrafficEngineering::MulticastRequest request;
-            request.messageLength = 128 * 8; // TODO: Make these into parameters
-            request.sendInterval = 1; //
+            request.messageLength = messageLength;
+            request.sendInterval = sendInterval;
             request.appOwnerName = sender;
             request.appReceiverNames = receivers;
 
