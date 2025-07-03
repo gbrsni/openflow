@@ -91,15 +91,15 @@ void FiDeController::initialize(int stage){
     // Get Open_Flow_Switch MACs
     // What this does is getting the MAC address on the control plane for the Open_Flow_Switch modules.
     // This is useful later since that is the ID they use in OF packets they send to the controller
-    topo_spanntree.extractByNedTypeName(typenames); // TODO: rename variable
-    log("FiDeController cTopology found " + std::to_string(topo_spanntree.getNumNodes()));
+    topo_SwitchMACs.extractByNedTypeName(typenames);
+    log("FiDeController cTopology found " + std::to_string(topo_SwitchMACs.getNumNodes()));
 
-    nodeInfo.resize(topo_spanntree.getNumNodes());
-    for (int i = 0; i < topo_spanntree.getNumNodes(); i++) {
-        nodeInfo[i].moduleID = topo_spanntree.getNode(i)->getModuleId();
-        nodeInfo[i].treeNeighbors.resize(topo_spanntree.getNumNodes(),0);
+    nodeInfo.resize(topo_SwitchMACs.getNumNodes());
+    for (int i = 0; i < topo_SwitchMACs.getNumNodes(); i++) {
+        nodeInfo[i].moduleID = topo_SwitchMACs.getNode(i)->getModuleId();
+        nodeInfo[i].treeNeighbors.resize(topo_SwitchMACs.getNumNodes(),0);
 
-        auto module = topo_spanntree.getNode(i)->getModule();
+        auto module = topo_SwitchMACs.getNode(i)->getModule();
         auto modulePath = module->getFullPath();
         log("Module Path: " + modulePath, DEBUG);
 
@@ -207,11 +207,11 @@ std::vector<std::string> FiDeController::parseReceivers(std::string str) {
 std::string FiDeController::getModuleMameByMac(MacAddress mac) {
     std::string res = "";
 
-    for (int i = 0; i < topo_spanntree.getNumNodes(); i++) {
-        nodeInfo[i].moduleID = topo_spanntree.getNode(i)->getModuleId();
-        nodeInfo[i].treeNeighbors.resize(topo_spanntree.getNumNodes(),0);
+    for (int i = 0; i < topo_SwitchMACs.getNumNodes(); i++) {
+        nodeInfo[i].moduleID = topo_SwitchMACs.getNode(i)->getModuleId();
+        nodeInfo[i].treeNeighbors.resize(topo_SwitchMACs.getNumNodes(),0);
 
-        auto module = topo_spanntree.getNode(i)->getModule();
+        auto module = topo_SwitchMACs.getNode(i)->getModule();
         auto modulePath = module->getFullPath();
         log("Module Path: " + modulePath, DEBUG);
 

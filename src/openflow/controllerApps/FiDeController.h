@@ -35,7 +35,7 @@ protected:
     };
 
     typedef std::vector<NodeInfo> NodeInfoVector;
-    cTopology topo_spanntree;
+    cTopology topo_SwitchMACs;
     NodeInfoVector nodeInfo;
 
 private:
