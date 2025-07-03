@@ -7,6 +7,7 @@
 #include "openflow/openflow/switch/Flow_Table.h"
 
 #include <Link.h>
+#include <Tunnel.h>
 
 class FiDeController: public AbstractControllerApp {
 public:
@@ -37,6 +38,8 @@ protected:
     typedef std::vector<NodeInfo> NodeInfoVector;
     cTopology topo_SwitchMACs;
     NodeInfoVector nodeInfo;
+
+    std::vector<TrafficEngineering::Tunnel> tunnels;
 
 private:
     std::vector<std::string> parseReceivers(std::string str);

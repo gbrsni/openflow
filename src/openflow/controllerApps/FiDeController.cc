@@ -67,9 +67,6 @@ void FiDeController::initialize(int stage){
         TrafficEngineering::Topology topology = TrafficEngineering::makeTopologyFromCurrentNetwork(typenames);
         log("TE Topology made");
 
-        // TODO: Make this class global, for proper resource allocation
-        std::vector<TrafficEngineering::Tunnel> tunnels;
-
         TrafficEngineering::MulticastRequest request;
         request.messageLength = 0; // TODO: Make these into parameters
         request.sendInterval = 0; //
