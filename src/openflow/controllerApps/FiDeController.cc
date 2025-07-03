@@ -88,8 +88,9 @@ void FiDeController::initialize(int stage){
     TrafficEngineering::Tunnel tunnel = TrafficEngineering::optimization(topology, tunnels, request);
 
     log("Tunnel links: ", DEBUG);
-    links = tunnel.getAllLinks();
-    for (auto i = links.begin(); i < links.end(); i++) {
+//    links[multicastGroup] = tunnel.getAllLinks();
+    links.emplace(multicastGroup, tunnel.getAllLinks());
+    for (auto i = links[multicastGroup].begin(); i < links[multicastGroup].end(); i++) {
         log("localNodeName: " + i->localNodeName, DEBUG);
         log("localNodeName: " + i->remoteNodeName, DEBUG);
         log("localInterfaceName: " + i->localInterfaceName, DEBUG);
@@ -163,7 +164,7 @@ void FiDeController::receiveSignal(cComponent *src, simsignal_t id, cObject *obj
                 }
 
                 // TODO: Iterate through groups, get ports for current iteration group
-                std::vector<uint32_t> ports = getPortsByMac(datapathMAC);
+                std::vector<uint32_t> ports = getPortsByMacAndGroup(datapathMAC, multicastGroup);
 
                 log("Ports:");
                 for (auto i = ports.begin(); i < ports.end(); i++) {
@@ -257,8 +258,8 @@ std::string FiDeController::getModuleMameByMac(MacAddress mac) {
     return res;
 }
 
-std::vector<uint32_t> FiDeController::getPortsByMac(MacAddress mac) {
-    log("getPortsByMac");
+std::vector<uint32_t> FiDeController::getPortsByMacAndGroup(MacAddress mac, Ipv4Address multicastGroup) {
+    log("getPortsByMacAndGroup");
     std::vector<uint32_t> res;
 
     std::string modulePath = getModuleMameByMac(mac);
@@ -268,7 +269,7 @@ std::vector<uint32_t> FiDeController::getPortsByMac(MacAddress mac) {
     // TODO: Make this into a map instead of iterating every time
     log("Tunnel links: ");
     std::vector<std::string> interfaceNames;
-    for (auto i = links.begin(); i < links.end(); i++) {
+    for (auto i = links[multicastGroup].begin(); i < links[multicastGroup].end(); i++) {
         log("localNodeName: " + i->localNodeName, DEBUG);
         log("remoteNodeName: " + i->remoteNodeName, DEBUG);
         log("localInterfaceName: " + i->localInterfaceName, DEBUG);

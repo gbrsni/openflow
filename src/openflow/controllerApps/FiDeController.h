@@ -54,9 +54,11 @@ private:
 
     void log(std::string msg, int loglevel=INFO);
     std::string getModuleMameByMac(MacAddress mac);
-    std::vector<uint32_t> getPortsByMac(MacAddress mac);
+    std::vector<uint32_t> getPortsByMacAndGroup(MacAddress mac, Ipv4Address multicastGroup);
 
-    std::vector<TrafficEngineering::Link> links;
+    // TODO: Make this a map of multicast group to vector of links?
+//    std::vector<TrafficEngineering::Link> links;
+    std::map<Ipv4Address, std::vector<TrafficEngineering::Link>> links;
 };
 
 #endif /* OPENFLOW_CONTROLLERAPPS_FLOWTABLEPRELOADER_H_ */
