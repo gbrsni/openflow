@@ -63,6 +63,8 @@ void FiDeController::initialize(int stage){
             }
             log("Multicast group:", INFO);
             log(multicastGroup.str(), INFO);
+            log("messageLength: " + std::to_string(messageLength), INFO);
+            log("sendInterval: " + std::to_string(sendInterval), INFO);
 
             // FiDe stuff
             // TE
