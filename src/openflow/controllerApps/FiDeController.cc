@@ -73,6 +73,7 @@ void FiDeController::initialize(int stage){
             request.appReceiverNames = receivers;
 
             TrafficEngineering::Tunnel tunnel = TrafficEngineering::optimization(topology, tunnels, request);
+            tunnels.push_back(tunnel);
 
             log("Tunnel links: ", DEBUG);
             links.emplace(multicastGroup, tunnel.getAllLinks());
