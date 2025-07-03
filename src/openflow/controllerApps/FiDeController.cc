@@ -52,13 +52,12 @@ void FiDeController::initialize(int stage){
         std::vector<std::string> receivers = parseReceivers((*fideGroup)["receivers"].stringValue());
         Ipv4Address multicastGroup = Ipv4Address((*fideGroup)["multicastGroup"].stringValue());
 
-        log(sender, WARN);
+        log("Current FiDe group:", DEBUG);
+        log(sender, DEBUG);
         for (auto i = receivers.begin(); i < receivers.end(); i++) {
-            log(*i, WARN);
+            log(*i, DEBUG);
         }
-
-//        const char* multicastGroupString = par("multicastGroup");
-//        multicastGroup = Ipv4Address(multicastGroupString);
+        log(multicastGroup.str(), DEBUG);
 
         // FiDe stuff
         // TE
@@ -67,8 +66,6 @@ void FiDeController::initialize(int stage){
 
         std::vector<TrafficEngineering::Tunnel> tunnels;
 
-    //    std::string const& sender = par("sender");
-    //    std::vector<std::string> const& receivers  = parseReceivers(par("receivers"));
         log("receivers:", DEBUG);
         for (auto i = receivers.begin(); i < receivers.end(); i++) {
             log(*i, DEBUG);
