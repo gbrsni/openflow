@@ -75,6 +75,13 @@ void FiDeController::initialize(int stage){
             TrafficEngineering::Tunnel tunnel = TrafficEngineering::optimization(topology, tunnels, request);
             tunnels.push_back(tunnel);
 
+            auto result = adjustment(tunnels);
+            float minLatency = result[0].minDelay;
+            float maxJitter = result[0].maxDelay - result[0].minDelay;
+            log("Result", WARN);
+            log("minLatency: " + std::to_string(minLatency), WARN);
+            log("maxJitter: " + std::to_string(maxJitter) , WARN);
+
             log("Tunnel links: ", DEBUG);
             links.emplace(multicastGroup, tunnel.getAllLinks());
             for (auto i = links[multicastGroup].begin(); i < links[multicastGroup].end(); i++) {
