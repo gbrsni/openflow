@@ -26,13 +26,18 @@ simple FiDeController like AbstractControllerApp
 //        	{
 //        	    sender: "Scenario_DynamicFatTree.fat_tree.client[1]",
 //        	    receivers: "Scenario_DynamicFatTree.fat_tree.client[2],Scenario_DynamicFatTree.fat_tree.client[3],Scenario_DynamicFatTree.fat_tree.client[10]",
-//        	    multicastGroup: "224.0.1.3"
+//        	    multicastGroup: "224.0.1.3",
+//				messageLength: 1024,
+//				sendInterval: 1
 //        	},
 //        	{
 //        	    sender: "Scenario_DynamicFatTree.fat_tree.client[0]",
 //        	    receivers: "Scenario_DynamicFatTree.fat_tree.client[4],Scenario_DynamicFatTree.fat_tree.client[5],Scenario_DynamicFatTree.fat_tree.client[15]",
-//        	    multicastGroup: "224.0.1.4"
+//        	    multicastGroup: "224.0.1.4",
+//				messageLength: 1024,
+//				sendInterval: 1
 //        	},
 //        ]
 		// Array of objects, each representing a FiDe group
+		// messageLength is in bits, sendInterval in seconds
 }
