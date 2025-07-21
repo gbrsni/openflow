@@ -79,11 +79,11 @@ void FiDeController::initialize(int stage){
             tunnels.push_back(tunnel);
 
             auto result = adjustment(tunnels);
-            double minLatency = result[result.size() - 1].minDelay;
-            double maxJitter = result[result.size() - 1].maxDelay - result[result.size() - 1].minDelay;
+            double minLatency = (result[result.size() - 1].minDelay) * 1e6;
+            double maxJitter = (result[result.size() - 1].maxDelay - result[result.size() - 1].minDelay) * 1e6;
             log("Result", INFO);
-            log("minLatency: " + std::to_string(minLatency), INFO);
-            log("maxJitter: " + std::to_string(maxJitter) , INFO);
+            log("minLatency: " + std::to_string(minLatency) + " μs", INFO);
+            log("maxJitter: " + std::to_string(maxJitter) + " μs" , INFO);
             log("", INFO);
 
             log("Tunnel links: ", DEBUG);
