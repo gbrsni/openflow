@@ -599,7 +599,7 @@ void OF_Switch::processFrame(Packet *pkt){
            pktDup->addTagIfAbsent<InterfaceReq>()->setInterfaceId(outport);
            send(pktDup, "dataPlaneOut");
        }
-
+       cancelAndDelete(pkt);
        return;
    }
 
