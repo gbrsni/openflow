@@ -10,8 +10,8 @@ cleanall: checkmakefiles
 	rm -f src/Makefile
 
 makefiles:
-	cd src && opp_makemake --make-so -f --deep -O out -KINET_PROJ=../../inet -DINET_IMPORT -I. -I$$\(INET_PROJ\)/src -L$$\(INET_PROJ\)/src -lINET$$\(D\)
-
+#	cd src && opp_makemake --make-so -f --deep -O out -KINET_PROJ=../../inet4.4 -DINET_IMPORT -I. -I$$\(INET_PROJ\)/src -L$$\(INET_PROJ\)/src -lINET$$\(D\)
+	cd src && opp_makemake --make-so -f --deep -O out -KINET_PROJ=../../inet4.4 -KTRAFFICENGINEERING_PROJ=../../traffic-engineering -DINET_IMPORT -I. -I$$\(INET_PROJ\)/src -I$$\(TRAFFICENGINEERING_PROJ\)/include -L$$\(INET_PROJ\)/src -lINET$$\(D\) -L$$\(TRAFFICENGINEERING_PROJ\)/src -ltraffic-engineering$$\(D\)
 checkmakefiles:
 	@if [ ! -f src/Makefile ]; then \
 	echo; \
